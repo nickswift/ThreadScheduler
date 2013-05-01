@@ -1,4 +1,4 @@
-Created: Design.txt
+Created: design.txt
  PROGRAMMING ASSIGNMENT 2
  User Space Thread Scheduler...er
  CMPS 111 Spring 2013
