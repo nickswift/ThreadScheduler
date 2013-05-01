@@ -13,7 +13,9 @@
 /* Main application starting point */
 int main(void){
 	
-	/* STUB */
+	/* a print statement */
+	printf("Hello, World!\n");
+	
 	return 0;
 }
  
