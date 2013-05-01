@@ -14,6 +14,6 @@
 int main(void){
 	
 	/* STUB */
-
+	return 0;
 }
  
