@@ -13,7 +13,7 @@ FORMAT_FLAGS=-bad -bap -bbb -bbo -br -brs -ce -i2 -cli2 -l80 -lc80 -npcs -npsl -
 all: $(TARGET)
 
 $(TARGET): $(OBJS)
-	$(CC) -o $@ $^
+	$(CC) -o $@ $^ thread_utils.o
 	
 %.o: %.c
 	$(CC) -c -o $@ $< $(CFLAGS)

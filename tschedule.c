@@ -11,13 +11,13 @@
 #include <stdlib.h>
 #include <setjmp.h>
 
+#include "tschedule.h"
+
 void thread_utils_init();
 void thread_stack_init(jmp_buf *env, int size);
 
 sigjmp_buf env[2];
-int test_thread(void);
 int thread = 0;
-void thread_exit(int);
 
 /* Main application starting point */
 int main(void){
@@ -36,10 +36,11 @@ int main(void){
 		printf("Main returned from thread_yield\n");
 	}
 	thread_exit(0);
+	return 0;
 }
 
 /* A test thread to run */
-int test_thread(void){
+void test_thread(void){
 	printf("In test_thread\n");
 	
 	/* Thread alternation loop */
@@ -52,11 +53,10 @@ int test_thread(void){
 }
 
 /* yield for another thread */
-int thread_yield(){
+void thread_yield(void){
 
-	int old_thread = thread;
-	
-	thread = 1 - thread;
+	int old_thread 	= thread;	
+	thread 			= 1 - thread;
 	
 	printf("Thread %d yielding to %d\n", old_thread, thread);
 	
@@ -75,7 +75,7 @@ int thread_yield(){
 }
 
 /* Create a thread */
-int thread_create(int (*thread_function)(void)) {
+void thread_create(void (*thread_function)(void)) {
 
 	int newthread = 1-thread;
 	
