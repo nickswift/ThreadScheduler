@@ -1,6 +1,6 @@
 SlugCorp
 ========
-*Why solve it, when you can Slug it? &reg;*
+*Why solve it, when you can Slug it? &trade;*
 
 ThreadScheduler
 ---------------
