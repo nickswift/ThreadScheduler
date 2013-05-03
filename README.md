@@ -1,8 +1,9 @@
-# SlugCorp
-## Why solve it, when you can Slug it? &reg;
+SlugCorp
+========
+*Why solve it, when you can Slug it? &reg;*
 
 ThreadScheduler
-===============
+---------------
 
 A simple user-space thread scheduler
 
