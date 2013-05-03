@@ -5,6 +5,7 @@
 TARGET=tschedule
 CC=gcc
 OBJS=tschedule.o
+OBJS_NOCLEAN=thread_utils.o
 CFLAGS=-Wall -Wextra -O2
 FORMAT=indent
 FORMAT_TARGET=tschedule.c
@@ -12,8 +13,8 @@ FORMAT_FLAGS=-bad -bap -bbb -bbo -br -brs -ce -i2 -cli2 -l80 -lc80 -npcs -npsl -
 
 all: $(TARGET)
 
-$(TARGET): $(OBJS)
-	$(CC) -o $@ $^ thread_utils.o
+$(TARGET): $(OBJS) $(OBJS_NOCLEAN)
+	$(CC) -o $@ $^
 	
 %.o: %.c
 	$(CC) -c -o $@ $< $(CFLAGS)
