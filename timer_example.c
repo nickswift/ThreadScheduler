@@ -19,7 +19,7 @@ int main(void) {
     /* an interval of 0 prevents reinitialization */
     timer_once.it_value.tv_sec = 2;
 
-    /* timer signals every thirty seconds   */
+    /* timer signals every four seconds */
     timer_cont.it_interval.tv_sec = 4;
     timer_cont.it_value.tv_sec = 4;
 
