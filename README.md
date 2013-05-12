@@ -19,3 +19,8 @@ A simple user-space thread scheduler
 > we're going to need it because while the array Brandt gave us in the assignment
 > is needed to make the thread context switching work, we're using the linked list
 > to keep track of lottery tickets for the main scheduling subroutines.
+>
+> Also, the current make targets are as follows:
+> main: the main program we're going to turn in
+> test: the thread list testing program
+> clean: git rid o' dat shit
