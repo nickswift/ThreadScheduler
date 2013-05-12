@@ -27,6 +27,9 @@ TLNodeRef getNodeAtIndex(TLRef L, int i);
 
 /* Mutators */
 void insertThread(TLRef L, TLNodeRef N);
+void setThreadTickets(TLNodeRef N, int _tickets);
+
+TLNodeRef popThread(TLRef L);
 
 /* List Operations */
 

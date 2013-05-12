@@ -18,15 +18,10 @@ typedef struct ThreadListNode {
 } ThreadListNode;
 
 typedef struct ThreadList {
-	
 	/* Number of tickets present in the list */
 	int ticketCount;
 	struct ThreadListNode * front;
 	struct ThreadListNode * back;
-	
-	/* Walk helpers */
-	struct ThreadListNode * current;
-	
 } ThreadList;
  
 /* Constructors */
@@ -46,8 +41,6 @@ TLRef newThreadList(void){
 	_list->ticketCount 	= 0;
 	_list->front		= NULL;
 	_list->back			= NULL;
-	_list->current		= NULL;
-	
 	return(_list);
 }
 
@@ -65,6 +58,18 @@ void freeThreadListNode(TLNodeRef * pN){
 }
 void freeThreadList(TLRef * pL){
 	if(pL != NULL && *pL != NULL){
+		/* Free elements on the list */
+		TLNodeRef tmpNode = popThread(*pL);
+		
+		while(tmpNode != NULL){
+			/* free node */
+			freeThreadListNode(&tmpNode);
+			
+			/* get next node */
+			tmpNode = popThread(*pL);
+		}
+	
+		/* now, free this list */
 		free(*pL);
 		*pL = NULL;
 	}
@@ -81,7 +86,6 @@ TLNodeRef getFront(TLRef L){
 		printf("Error: Calling getFront() on an empty list\n");
 		exit(1);
 	}
-	
 	return(L->front);
 }
 
@@ -103,10 +107,10 @@ TLNodeRef getNodeAtIndex(TLRef L, int i){
 	/* Set up walk */
 	int tmpIndex 		= 0;
 	int walkIndexBuffer = 0;
-	L->current 			= getFront(L);
+	TLNodeRef current	= getFront(L);
 	
 	/* Walk down the list */
-	while(L->current != NULL && tmpIndex < i){
+	while(current != NULL && tmpIndex < i){
 		/** 
 		 * increment tmpIndex, and walk forward 
 		 * if the walk index buffer equals current's ticket count
@@ -114,18 +118,17 @@ TLNodeRef getNodeAtIndex(TLRef L, int i){
 		tmpIndex++;
 		walkIndexBuffer++;
 	
-		if(walkIndexBuffer >= L->current->tickets){
+		if(walkIndexBuffer >= current->tickets){
 			walkIndexBuffer = 0;
-			L->current = L->current->next;
+			current 		= current->next;
 		}
 	}
 	
-	return(L->current);
+	return(current);
 }
 
 /* Mutators */
 void insertThread(TLRef L, TLNodeRef N){
-	
 	/* Insert node on the list */
 	if(L->front == NULL){
 		L->front 	  = N;
@@ -140,7 +143,32 @@ void insertThread(TLRef L, TLNodeRef N){
 	L->ticketCount += N->tickets;
 }
 
+/* set number of lottery tickets associated with a thread */
+void setThreadTickets(TLNodeRef N, int _tickets){
+	N->tickets = _tickets;
+}
+
+/**
+ * Pop a thread off the back of the list and return 
+ * the reference to that node.
+ */
+TLNodeRef popThread(TLRef L){
+	TLNodeRef tmpNode = NULL;
+	if(L->back != NULL){
+		tmpNode = L->back;
+		L->back = L->back->next;
+	}
+	return(tmpNode);
+}
+
 /* List Operations */
 void printList(TLRef L){
+	
+	TLNodeRef current = L->back;
+	
+	while(current != NULL){
+		printf("Tickets: %d\n\n", current->tickets);
+		current = current->next;
+	}
 	
 }
