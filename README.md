@@ -21,6 +21,7 @@ A simple user-space thread scheduler
 > to keep track of lottery tickets for the main scheduling subroutines.
 >
 > Also, the current make targets are as follows:
-> main: the main program we're going to turn in
-> test: the thread list testing program
-> clean: git rid o' dat shit
+> 
+> 1. main: the main program we're going to turn in
+> 2. test: the thread list testing program
+> 3. clean: git rid o' dat shit
