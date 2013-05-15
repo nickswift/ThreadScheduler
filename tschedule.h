@@ -1,3 +1,9 @@
+/**
+ * Modified: tschedule.c
+ * PROGRAMMING ASSIGNMENT 2
+ * CMPS 111 Spring 2013
+ * Authors: Andrew Bao, Konstantin Litovskiy, Tyler Esser & Nick Wood
+ */
 #include <stdio.h>
 #include <stdlib.h>
 #include <setjmp.h>

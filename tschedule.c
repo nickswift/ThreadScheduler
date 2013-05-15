@@ -1,4 +1,9 @@
 /**
+ * Modified: tschedule.c
+ * PROGRAMMING ASSIGNMENT 2
+ * CMPS 111 Spring 2013
+ * Authors: Andrew Bao, Konstantin Litovskiy, Tyler Esser & Nick Wood
+ * 
  * tSchedule
  *     a simple user-space thread scheduler
  *     programming assingment 2 for CS111 @ UCSC
