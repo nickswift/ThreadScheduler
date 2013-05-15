@@ -1,4 +1,9 @@
 /**
+ * Created: thread_list.c
+ * PROGRAMMING ASSIGNMENT 2
+ * CMPS 111 Spring 2013
+ * Authors: Andrew Bao, Konstantin Litovskiy, Tyler Esser & Nick Wood
+ * 
  * Thread List
  * A linked list containing the number of lottery tickets,
  * as well as identifying information regarding the threads
@@ -15,29 +20,35 @@ typedef struct ThreadListNode {
 	int tickets;
 	/* next node on the list */
 	struct ThreadListNode * next;
+	/*Pointer for thread object */  
+	struct ThreadObject* thread; 
+	
 } ThreadListNode;
 
 typedef struct ThreadList {
 	/* Number of tickets present in the list */
 	int ticketCount;
+	int threadCount;
 	struct ThreadListNode * front;
 	struct ThreadListNode * back;
 } ThreadList;
  
 /* Constructors */
-TLNodeRef newThreadListNode(void){
+TLNodeRef newThreadListNode(int initTickets, ThreadObject newThread){
 	/* Allocate memory for the new node */
 	TLNodeRef _node = malloc(sizeof(ThreadListNode));
 	
 	/* Set node data values */
-	_node->tickets 	= 0;
+	_node->tickets 	= initTickets;
 	_node->next 	= NULL;
+	_node->thread 	= newThread;
 	
 	return(_node);
 }
 
 TLRef newThreadList(void){
 	TLRef _list 		= malloc(sizeof(ThreadList));
+	_list->threadCount 	= 0;
 	_list->ticketCount 	= 0;
 	_list->front		= NULL;
 	_list->back			= NULL;
@@ -52,6 +63,8 @@ void freeThreadListNode(TLNodeRef * pN){
 		 * Free memory at given address and 
 		 * destroy the pointer 
 		 */
+		free(pn->next);
+		free(pn->thread);
 		free(*pN);
 		*pN = NULL;
 	}
@@ -70,6 +83,8 @@ void freeThreadList(TLRef * pL){
 		}
 	
 		/* now, free this list */
+		front = NULL;
+		back = NULL;
 		free(*pL);
 		*pL = NULL;
 	}
@@ -141,11 +156,44 @@ void insertThread(TLRef L, TLNodeRef N){
 	
 	/* Add node tickets to ticket count */
 	L->ticketCount += N->tickets;
+	L->threadCount ++;
 }
 
 /* set number of lottery tickets associated with a thread */
-void setThreadTickets(TLNodeRef N, int _tickets){
+void setThreadTickets(TLRef L, TLNodeRef N, int _tickets){
+	/* remove current # of tickets from count */
+	L->ticketCount -= N->tickets;
+	
+	/* Update node's tickets */
 	N->tickets = _tickets;
+	
+	/* Re-Add node's tickets to ticket count */
+	L->ticketCount += N->tickets;
+}
+
+/* removes node and thread from list */
+void removeThreadNode(TLRef L, int _threadID){
+	TLNodeRef tmp = L->front;
+	TLNodeRef target = L->front;
+	
+	if(target != NULL){
+		/* searching list for the predecesor to the thread to be deleted */
+		while(target->next != NULL && target->next->thread->id != _threadID){
+			target = target->next;
+		}
+		
+		if(target ->next != NULL){
+			L->front = target->next;
+			target->next = target->next->next;
+			target->next = tmp;
+			
+			if(L->front == L->back){
+				L->back = target;
+			}
+			
+			tmp = popThread (L);
+		}
+	}
 }
 
 /**
@@ -158,6 +206,10 @@ TLNodeRef popThread(TLRef L){
 		tmpNode = L->back;
 		L->back = L->back->next;
 	}
+	
+	L->ticketCount -= tmpNode->tickets;
+	L->threadCount --;
+	
 	return(tmpNode);
 }
 
