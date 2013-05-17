@@ -120,22 +120,19 @@ TLNodeRef getNodeAtIndex(TLRef L, int i){
 	}
 	
 	/* Set up walk */
-	int tmpIndex 		= 0;
+	int tmpIndex 		= i;
 	int walkIndexBuffer = 0;
 	TLNodeRef current	= getFront(L);
 	
 	/* Walk down the list */
-	while(current != NULL && tmpIndex < i){
+	while(current != NULL && tmpIndex <= 0){
 		/** 
-		 * increment tmpIndex, and walk forward 
-		 * if the walk index buffer equals current's ticket count
+		 * decrament tmpIndex with the number of tickets at each node
+		 * if tmpIndex remains above 0, move set current to the next node. 
 		 */
-		tmpIndex++;
-		walkIndexBuffer++;
-	
-		if(walkIndexBuffer >= current->tickets){
-			walkIndexBuffer = 0;
-			current 		= current->next;
+		tmpIndex -= current->tickets;
+		if(tmpIndex > 0){
+			current = current->next;
 		}
 	}
 	
@@ -182,7 +179,7 @@ void removeThreadNode(TLRef L, int _threadID){
 			target = target->next;
 		}
 		
-		if(target ->next != NULL){
+		if(target->next != NULL){
 			L->front = target->next;
 			target->next = target->next->next;
 			target->next = tmp;
@@ -191,7 +188,7 @@ void removeThreadNode(TLRef L, int _threadID){
 				L->back = target;
 			}
 			
-			tmp = popThread (L);
+			tmp = popThread(L);
 		}
 	}
 }

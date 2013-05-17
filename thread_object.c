@@ -8,6 +8,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
+#include "thread_object.h"
 
 typedef struct ThreadObject {
 	
