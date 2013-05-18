@@ -11,7 +11,6 @@
 #include "thread_object.h"
 
 typedef struct ThreadObject {
-	
 	/* stores thread's id, and number of 
 	 * iterations it will perform 
 	 */
@@ -19,21 +18,29 @@ typedef struct ThreadObject {
 	
 	/* stores thread's creation time */
 	time_t create_time; 
-		
 } ThreadObject;
 
-/* Constructors */
+/* Constructor */
 TORef newThread(int initID, initIT){	
 	/* Allocate memory for the new thread objects */
-	TORef _thread = malloc(sizeof(ThreadObject));
+	TORef thread = malloc(sizeof(ThreadObject));
 	
 	time_t tmpTime;
-	time( &tmpTime);
+	time(&tmpTime);
 	
 	/* Set thread data values */
-	_thread->id 			= initID;
-	_thread->iteration_time = initIT;
-	_thread->create_time 	= tmpTime;
+	thread->id             = initID;
+	thread->iteration_time = initIT;
+	thread->create_time    = tmpTime;
 	
-	return(_thread);
+	return(thread);
+}
+
+/* destructor */
+void freeThread(TORef T){
+    TORef * pT = &T;
+    if(*pT != NULL && pT != NULL){
+        free(*pT);
+        *pT = NULL;
+    }
 }

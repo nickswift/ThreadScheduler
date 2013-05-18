@@ -11,4 +11,8 @@
 
 typedef struct ThreadObject	* TORef;
 
+/* constructor */
 TORef newThread(int initID, initIT);
+
+/* destructor */
+void freeThread(TORef T);
