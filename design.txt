@@ -1,0 +1,5 @@
+CS111 -- Programming Assignment 2
+Lottery Scheduler
+
+Authors: Konstantin Litovsky, Anderew Bao, Tyler Esser, Nick Wood
+
