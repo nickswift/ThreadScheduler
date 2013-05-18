@@ -10,17 +10,18 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
+#include <stdbool.h>
 #include "scheduler.h"
 #include "thread_list.c"
 #include "thread_object.h"
 
- typedef struct SchedLottery{
+typedef struct SchedLottery{
 	
 	/* 
 	 */
 	TLRef * threadList;
 	TLNodeRef * runningNode;
-	int time_quantum, winner;	
+	int time_quantum;
 			
 } SchedLottery;
 
@@ -48,6 +49,20 @@ void freeSchedLottery(SLotto * oldLotto){
 	
 	free(*oldLotto);
 	oldLotto = NULL;
+}
+
+void runScheduler(SLotto _lotto){
+	while(true){
+		bool run = true;
+		while(run){
+			if(!isListEmpty(_lotto->threadList)){
+				_lotto->runningNode = getNextNode(_lotto);
+				run = false;
+			}
+			startTimer();
+			/*startThread()*/
+		}
+	}
 }
 
 TLNodeRef getNextNode(SLotto * _lotto){

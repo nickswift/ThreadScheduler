@@ -193,6 +193,10 @@ void removeThreadNode(TLRef L, int _threadID){
 	}
 }
 
+bool isListEmpty(TLRef _list){
+	return _list->threadCount;
+}
+
 /**
  * Pop a thread off the back of the list and return 
  * the reference to that node.
@@ -213,10 +217,10 @@ TLNodeRef popThread(TLRef L){
 /* List Operations */
 void printList(TLRef L){
 	
-	TLNodeRef current = L->back;
-	
+	TLNodeRef current = L->front;
+
 	while(current != NULL){
-		printf("Tickets: %d\n\n", current->tickets);
+		printf("Tickets: %d | Thread ID: &d\n\n", current->tickets, current->thread->id);
 		current = current->next;
 	}
 	

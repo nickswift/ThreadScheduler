@@ -28,6 +28,7 @@ void freeThreadListNode(TLNodeRef *pN);
 /* Accessors */
 TLNodeRef getFront(TLRef L);
 TLNodeRef getNodeAtIndex(TLRef L, int i);
+bool isListEmpty(TLRef _list);
 
 /* Mutators */
 void insertThread(TLRef L, TLNodeRef N);

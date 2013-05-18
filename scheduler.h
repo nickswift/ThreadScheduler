@@ -17,6 +17,7 @@ typedef struct SchedLottery * SLotto;
 SLotto newLottery(int initQuantum);
 
 /* Cleanup */
+void runScheduler(SLotto Lotto);
 void freeSchedLottery(SLotto * oldLotto);
 
 /* Scheduler Functions */
