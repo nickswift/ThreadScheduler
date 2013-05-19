@@ -19,7 +19,7 @@ typedef struct ThreadListNode *TLNodeRef;
 
 /* Constructors */
 TLRef newThreadList(void);
-TLNodeRef newThreadListNode(int initTickets, ThreadObject newThread);
+TLNodeRef newThreadListNode(void *initData, int initTickets);
 
 /* Destructors */
 void freeThreadList(TLRef *pL);
@@ -27,16 +27,12 @@ void freeThreadListNode(TLNodeRef *pN);
 
 /* Accessors */
 TLNodeRef getFront(TLRef L);
-TLNodeRef getNodeAtIndex(TLRef L, int i);
-bool isListEmpty(TLRef _list);
+TLNodeRef getNodeAtIndex(TLRef L, int index);
+TLNodeRef getNodeAtTicket(TLRef L, int numTickets);
+int isListEmpty(TLRef L);
 
 /* Mutators */
-void insertThread(TLRef L, TLNodeRef N);
-void setThreadTickets(TLNodeRef N, int _tickets);
-void removeThreadNode(TLRef L, int _threadID);
-TLNodeRef popThread(TLRef L);
-
-/* List Operations */
-void printList(TLRef L);
+void insertNode(TLRef L, TLNodeRef N);
+void removeNode(TLRef L, int index);
 
 #endif

@@ -15,37 +15,26 @@
 #include "thread_list.h"
 
 /* Struct declarations */
-typedef struct ThreadListNode {
-	/* tickets in this node */
-	int tickets;
-	/* next node on the list */
-	struct ThreadListNode * next;
-	/* Pointer for thread object */
-	struct ThreadObject* thread;
-
-} ThreadListNode;
-
 typedef struct ThreadList {
 	/* Number of tickets present in the list */
 	int ticketCount;
+	/* Number of threads in the list */
 	int threadCount;
+	/* Pointers to first and last elements */
 	struct ThreadListNode *front;
 	struct ThreadListNode *back;
 } ThreadList;
 
+typedef struct ThreadListNode {
+	/* pointer to data for the node */
+	void *data;
+	/* tickets in this node */
+	int tickets;
+	/* next node on the list */
+	struct ThreadListNode * next;
+} ThreadListNode;
+
 /* Constructors */
-TLNodeRef newThreadListNode(int initTickets, ThreadObject newThread){
-	/* Allocate memory for the new node */
-	TLNodeRef _node = malloc(sizeof(ThreadListNode));
-
-	/* Set node data values */
-	_node->tickets 	= initTickets;
-	_node->next 	= NULL;
-	_node->thread 	= newThread;
-
-	return(_node);
-}
-
 TLRef newThreadList(void){
 	TLRef _list 		= malloc(sizeof(ThreadList));
 	_list->threadCount 	= 0;
@@ -55,18 +44,19 @@ TLRef newThreadList(void){
 	return(_list);
 }
 
-/* Destructors */
-void freeThreadListNode(TLNodeRef * pN){
-	/* Make sure we're not passing a null pointer */
-	if(pN != NULL && *pN != NULL){
-		/* Free memory at given address and destroy the pointer */
-		free(pn->next);
-		free(pn->thread);
-		free(*pN);
-		*pN = NULL;
-	}
+TLNodeRef newThreadListNode(void *initData, int initTickets){
+	/* Allocate memory for the new node */
+	TLNodeRef _node = malloc(sizeof(ThreadListNode));
+
+	/* Set node data values */
+	_node->data = initData;
+	_node->next 	= NULL;
+	_node->tickets 	= initTickets;
+
+	return(_node);
 }
 
+/* Destructors */
 void freeThreadList(TLRef * pL){
 	if(pL != NULL && *pL != NULL){
 		/* Free elements on the list */
@@ -85,6 +75,17 @@ void freeThreadList(TLRef * pL){
 	}
 }
 
+void freeThreadListNode(TLNodeRef * pN){
+	/* Make sure we're not passing a null pointer */
+	if(pN != NULL && *pN != NULL){
+		/* Free memory at given address and destroy the pointer */
+		free(pn->next);
+		free(pn->data);
+		free(*pN);
+		*pN = NULL;
+	}
+}
+
 /* Accessors */
 TLNodeRef getFront(TLRef L){
 	/* Error conditions */
@@ -100,17 +101,42 @@ TLNodeRef getFront(TLRef L){
 }
 
 /**
- * Choose a thread corresponding to an index
+ * Returns the node at index in the list
+ * Assuming front is element 0
+ */
+TLNodeRef getNodeAtIndex(TLRef L, int index){
+	/* Error conditions */
+	if(L == NULL){
+		printf("Error: null List reference\n");
+		exit(1);
+	}
+	if(index < 0 || i > L->ticketCount){
+		printf("Error: given index out of range.");
+		exit(1);
+	}
+	
+	TLNodeRef current = getFront(L);
+	while(current != NULL && index >= 0)
+	{
+		current = current->next;
+		--index;
+	}
+	
+	return(current);	
+}
+
+/**
+ * Choose a Node based on ticket count
  * within the list's range of lottery tickets
  */
-TLNodeRef getNodeAtIndex(TLRef L, int i){
+TLNodeRef getNodeAtTicket(TLRef L, int i){
 	/* Error conditions */
 	if(L == NULL){
 		printf("Error: null List reference\n");
 		exit(1);
 	}
 	if(i < 0 || i > L->ticketCount){
-		printf("Error: given index out of range.");
+		printf("Error: given ticket index out of range.");
 		exit(1);
 	}
 
@@ -135,7 +161,7 @@ TLNodeRef getNodeAtIndex(TLRef L, int i){
 }
 
 /* Mutators */
-void insertThread(TLRef L, TLNodeRef N){
+void insertNode(TLRef L, TLNodeRef N){
 	/* Insert node on the list */
 	if(L->front == NULL){
 		L->front 	= N;
@@ -151,27 +177,16 @@ void insertThread(TLRef L, TLNodeRef N){
 	L->threadCount++;
 }
 
-/* set number of lottery tickets associated with a thread */
-void setThreadTickets(TLRef L, TLNodeRef N, int _tickets){
-	/* remove current # of tickets from count */
-	L->ticketCount -= N->tickets;
-
-	/* Update node's tickets */
-	N->tickets = _tickets;
-
-	/* Re-Add node's tickets to ticket count */
-	L->ticketCount += N->tickets;
-}
-
 /* removes node and thread from list */
-void removeThreadNode(TLRef L, int _threadID){
+void removeNode(TLRef L, int index){
 	TLNodeRef tmp = L->front;
 	TLNodeRef target = L->front;
 
 	if(target != NULL){
 		/* searching list for the predecesor to the thread to be deleted */
-		while(target->next != NULL && target->next->thread->id != _threadID){
+		while(target->next != NULL && index >= 0){
 			target = target->next;
+			--index;
 		}
 
 		if(target->next != NULL){
@@ -186,8 +201,8 @@ void removeThreadNode(TLRef L, int _threadID){
 	}
 }
 
-bool isListEmpty(TLRef _list){
-	return _list->threadCount;
+bool isListEmpty(TLRef L){
+	return L->threadCount;
 }
 
 /**
