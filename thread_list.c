@@ -58,16 +58,16 @@ TLNodeRef newThreadListNode(void *initData, int initTickets){
 
 /* Destructors */
 /* Forward declaration to allow use in deconstructors*/
-TLNodeRef popThread(TLRef L); 
+TLNodeRef popNode(TLRef L); 
 
 void freeThreadList(TLRef * pL){
 	if(pL != NULL && *pL != NULL){
 		/* Free elements on the list */
-		TLNodeRef tmpNode = popThread(*pL);
+		TLNodeRef tmpNode = popNode(*pL);
 
 		while(tmpNode != NULL){
 			freeThreadListNode(&tmpNode); /* free node */
-			tmpNode = popThread(*pL); /* get next node */
+			tmpNode = popNode(*pL); /* get next node */
 		}
 
 		/* now, free this list */
@@ -113,8 +113,8 @@ TLNodeRef getNodeAtIndex(TLRef L, int index){
 		printf("Error: null List reference\n");
 		exit(1);
 	}
-	if(index < 0 || index > L->ticketCount){
-		printf("Error: given index out of range.");
+	if(index < 0 || index > L->threadCount){
+		printf("Error: given index out of range.\n");
 		exit(1);
 	}
 	
@@ -139,7 +139,7 @@ TLNodeRef getNodeAtTicket(TLRef L, int numTickets){
 		exit(1);
 	}
 	if(numTickets < 0 || numTickets > L->ticketCount){
-		printf("Error: given ticket index out of range.");
+		printf("Error: given ticket index out of range.\n");
 		exit(1);
 	}
 
@@ -170,8 +170,8 @@ void insertNode(TLRef L, TLNodeRef N){
 		L->back 	= N;
 	}
 	else{
-		L->front->next 	= N;
-		L->front 		= N;
+		L->back->next 	= N;
+		L->back 		= N;
 	}
 
 	/* Add node tickets to ticket count */
@@ -183,7 +183,7 @@ void insertNode(TLRef L, TLNodeRef N){
  * Pop a thread off the back of the list and return
  * the reference to that node.
  */
-TLNodeRef popThread(TLRef L){
+TLNodeRef popNode(TLRef L){
 	TLNodeRef tmpNode = NULL;
 	if(L->back != NULL){
 		tmpNode = L->back;
@@ -198,6 +198,15 @@ TLNodeRef popThread(TLRef L){
 
 /* removes node and thread from list */
 void removeNode(TLRef L, int index){
+	/* Error conditions */
+	if(L == NULL){
+		printf("Error: null List reference\n");
+		exit(1);
+	}
+	if(index < 0 || index >= L->threadCount){
+		printf("Error: given index out of range.\n");
+		exit(1);
+	}
 	TLNodeRef tmp = L->front;
 	TLNodeRef target = L->front;
 
@@ -215,13 +224,13 @@ void removeNode(TLRef L, int index){
 
 			if(L->front == L->back){ L->back = target; }
 
-			tmp = popThread(L);
+			tmp = popNode(L);
 		}
 	}
 }
 
 int isListEmpty(TLRef L){
-	return L->threadCount;
+	return !(L->threadCount);
 }
 
 /* List Operations */
@@ -229,10 +238,11 @@ void printList(TLRef L){
 	TLNodeRef current = L->front;
 	int index = 0;
 	while(current != NULL){
-		printf("Index: %d | Tickets: %d \n\n", index, current->tickets);
+		printf("Index: %d | Tickets: %d \n", index, current->tickets);
 		++index;
 		current = current->next;
 	}
-
+	printf("\nNumber Of Nodes: %d\n", L->threadCount);
+	printf("Total Tickets: %d\n\n", L->ticketCount);
 }
 
