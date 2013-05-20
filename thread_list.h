@@ -33,7 +33,7 @@ int isListEmpty(TLRef L);
 
 /* Mutators */
 void insertNode(TLRef L, TLNodeRef N);
-void removeNode(TLRef L, int index);
+TLNodeRef removeNode(TLRef L, int index);
 
 /* List Operations */
 void printList(TLRef L);
