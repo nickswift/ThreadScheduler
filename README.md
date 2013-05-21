@@ -28,3 +28,11 @@ A simple user-space thread scheduler
 
 ## V0.3
 > Went scorched earth and redid the entire master branch
+> # Note on deleting lists
+>> I modified the way lists get deleted and added to. One adds data to a list by calling 
+>> insertData(TLRef L, void *data, int tickets), and a node is automatically created
+>> and inserted into the list.
+>>
+>> To delete a list, you must first clear it out using clearList(TLRef L). This function
+>> frees every node on the list in preparation for the list to be deleted. After calling this
+>> function, you can then call freeList(TLRef L) to finish the job.
