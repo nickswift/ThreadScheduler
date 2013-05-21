@@ -61,4 +61,13 @@ I fail to see the use in keeping a separate "thread_object" object in addition t
 to be something we can use thread list nodes to do. If we keep the context variable and thread ID 
 inside the list, then there's nothing else we need to do. We can just invoke the context change
 from a random thread by randomizing an index, selecting that random index off of the list, and 
-using the resultant node reference to extract the context we want to go into after setting the timer. 
+using the resultant node reference to extract the context we want to go into after setting the timer.
+
+## V0.4
+
+Tyler redid most of the code comprising scheduler.c, which included a rewrite of thread_object within that 
+file. This means that thread_object is now deprecated, and subject to deletion when scheduler is doing its
+job.
+
+thread_list can now be freed using a single function, freeList(TLRef *pL). This function calls clear_list()
+by itself, but that function is still accessible in case one wants to clear the list without deleting it.
