@@ -45,8 +45,8 @@ A simple user-space thread scheduler
 >>> ThreadListNode  -> TNRef
 >>
 >> Second: I fixed the errors GCC was throwing with respect to scheduler.c and the_app.c
->>> #define _XOPEN_SOURCE
->>> #include <ucontext.h>
+>>> define _XOPEN_SOURCE
+>>> include <ucontext.h>
 >> gets called before main() now. Also, I added threads.c's functions in stub-form to the_app.c
 >> until we figure out what to do with them.
 >>
