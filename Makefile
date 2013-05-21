@@ -13,7 +13,7 @@ FORMAT_FLAGS=-bad -bap -bbb -bbo -br -brs -ce -i2 -cli2 -l80 -lc80 -npcs -npsl -
 
 main: $(TARGET)
 
-test: threads.o
+testlist: thread_list.o
 	$(CC) -o $@ $^
     
 $(TARGET): $(OBJS)

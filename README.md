@@ -43,11 +43,13 @@ I had to make a few changes to some of the files so that they would work with my
 First: I changed the name of the list references to the following for more clarity:
 
 > ThreadList      -> TLRef
+
 > ThreadListNode  -> TNRef
 
 Second: I fixed the errors GCC was throwing with respect to scheduler.c and the_app.c
 
 > define _XOPEN_SOURCE
+
 > include <ucontext.h>
 
 gets called before main() now. Also, I added threads.c's functions in stub-form to the_app.c
