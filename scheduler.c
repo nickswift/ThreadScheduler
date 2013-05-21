@@ -6,9 +6,11 @@
  *
  * Scheduler.c
  */
-
-#include <signal.h>
 #include <stdio.h>
+#include <stdlib.h>
+#include <signal.h>
+
+#define _XOPEN_SOURCE
 #include <ucontext.h>
 
 #include <sys/time.h>
@@ -48,12 +50,13 @@ int thread_create(void (*thread_func)(void), int priority){
     /* give context new stack to separate from other contexts */
     pCTX->uc_stack.ss_sp = malloc(THREAD_STACKSIZE);
     pCTX->uc_stack.ss_size = THREAD_STACKSIZE;
-
+    
     /* uc_link used if thread exits. using main thread's ctx */
-    pCTX->uc_link = &((ThreadObj)getID(gbl_thread_list, 0)->ctx);
+    ThreadObj *pThrObj = getID(gbl_thread_list, 0);
+    pCTX->uc_link      = &(pThrObj->ctx);
 
     /* create thread object to insert into list */
-    insertData(gbl_thread_list, pThrObj, pThrObj->tickets, pThrObj->tid);
+    insertData(gbl_thread_list, pThrObj->tid, pThrObj, pThrObj->tickets);
 
     /* make the new context with the provided function */
     makecontext(pCTX, thread_func, 0);
@@ -71,13 +74,16 @@ void thread_yield(){
 
     /* don't need to swap if it's the same thread */
     if(old_tid != gbl_curr_thread){
-        swapcontext(&(((ThreadObj)getID(gbl_thread_list,old_tid))->ctx),
-                    &(((ThreadObj)getID(gbl_thread_list,gbl_curr_thread)->ctx);
+        
+        ThreadObj *thrOne = getID(gbl_thread_list,old_tid);
+        ThreadObj *thrTwo = getID(gbl_thread_list,gbl_curr_thread);
+    
+        swapcontext(&(thrOne->ctx),&(thrTwo->ctx));
     }
 
     /* restart the timer */
     struct itimerval new_timer = {0};
-    sched_timer.value.tv_sec = TIMER_Q_SEC;
+    sched_timer.value.tv_sec  = TIMER_Q_SEC;
     sched_timer.value.tv_usec = TIMER_Q_USEC;
 
     setitimer(ITIMER_VIRTUAL, &new_timer, NULL);
@@ -97,9 +103,12 @@ int lottery(){
     for(index = 0; goldenTicket > 0; index++){
         /* decrement tickets until negative,
          * giving the index of the selected thread */
-        goldenTicket -= ((ThreadObj)getIndex(gbl_thread_list, index))->tickets;
+        ThreadObj *tobj = getIndex(gbl_thread_list, index);
+        goldenTicket   -= tobj->tickets;
     }
-    return ((ThreadObj)getIndex(gbl_thread_list, index))->tid;
+    /* get returned value */
+    ThreadObj *retobj = getIndex(gbl_thread_list, index);
+    return retobj->tid;
 
 }
 

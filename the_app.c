@@ -12,9 +12,6 @@
 #include <stdlib.h>
 #include <time.h>
 
-#define _XOPEN_SOURCE
-#include <ucontext.h>
-
 #include "scheduler.h"
 
 
@@ -33,10 +30,12 @@ int main(){
 	for (threads = rand()%254 + 1 ; threads > 0; threads--){
         thread_create(threadFunction, rand()%39 + 0);
 	}
-
+	
 	while(numThreads() > 1){
 		thread_yield();
 	}
+	
+	return 0;
 }
 
 /**
