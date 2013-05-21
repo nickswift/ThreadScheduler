@@ -18,7 +18,7 @@ typedef struct ThreadList       * TLRef;
 typedef struct ThreadListNode   * TNRef;
 
 /* Constructors */
-TLRef newList(void);
+TLRef newThreadList(void);
 void insertData(TLRef L, void * data, int tickets);
 
 /* Destructors */
@@ -26,7 +26,10 @@ void freeList(TLRef *pL);
 void freeNode(TNRef *pN);
 
 /* check for list emptiness */
-int isEmpty(TLRef L);
+int isListEmpty(TLRef L);
+
+/* get number of tickets */
+int getTickets(TLRef L);
 
 /* get list size */
 int getSize(TLRef L);

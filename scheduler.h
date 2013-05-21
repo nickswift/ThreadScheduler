@@ -6,26 +6,31 @@
  *
  * Scheduler.h
  */
+ 
+#include "thread_list.h"
 
 #ifndef _SCHEDULER_H_INCLUDE
 #define _SCHEDULER_H_INCLUDE
 
-typedef struct SchedLottery *SLotto;
+typedef struct SchedLottery * SLotto;
 
 /* Constructor */
 SLotto newLottery(int initQuantum);
 
 /* Cleanup */
 void runScheduler(SLotto Lotto);
-void freeSchedLottery(SLotto *oldLotto);
+void freeSchedLottery(SLotto S);
+
+/* Create threads */
+void createThread(SLotto S, void* data, int priority);
 
 /* Scheduler Functions */
-TLNodeRef getNextNode(SLotto *_lotto);
+TNRef getNextNode(SLotto S);
 
 /* Timer Manipulations */
 void setupTimer(int timerQuantum);
-void stopTimer(SLotto *_lotto);
-void startTimer(SLotto *_lotto);
+void stopTimer(SLotto S);
+void startTimer(SLotto S);
 
 #endif
 

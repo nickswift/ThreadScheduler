@@ -33,7 +33,7 @@ struct ThreadList{
 } ThreadList;
 
 /* constructors */
-TLRef newList(void){
+TLRef newThreadList(void){
     /* Make the list */
     TLRef _list         = malloc(sizeof(struct ThreadList));
     _list->front        = NULL;
@@ -47,7 +47,7 @@ TLRef newList(void){
 
 /* A single node insertion wrapper to make this list easier to use */
 void insertData(TLRef L, void * data, int tickets){
-    TNRef _node      = malloc(sizeof(struct ThreadListNode));
+    TNRef _node     = malloc(sizeof(struct ThreadListNode));
     _node->data     = data;
     _node->tickets  = tickets;
     _node->next     = NULL;
@@ -83,8 +83,12 @@ void freeNode(TNRef *pN){
 }
 
 /* check list emptiness */
-int isEmpty(TLRef L){
+int isListEmpty(TLRef L){
     return (L->front == NULL);
+}
+
+int getTickets(TLRef L){
+    return L->numTickets;
 }
 
 int getSize(TLRef L){
@@ -139,7 +143,7 @@ void clearList(TLRef L){
     TNRef tmpNode;
     
     /* do the following until L is empty */
-    while(!isEmpty(L)){ 
+    while(!isListEmpty(L)){ 
         printf("Removing a node\n");
         /* check for list front */
         if(L->back == L->front)

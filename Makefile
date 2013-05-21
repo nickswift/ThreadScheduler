@@ -2,9 +2,9 @@
 # programming assignment 2
 # CS111 UCSC spring 2013
 
-TARGET=tschedule
+TARGET=scheduler
 CC=gcc
-OBJS=scheduler.o thread_list.o thread_object.o
+OBJS=the_app.o scheduler.o thread_object.o thread_list.o
 CFLAGS=-Wall -Wextra -O2
 GCC_IGNORE_STRUCT_INIT=-Wno-missing-field-initializers -Wno-missing-braces
 FORMAT=indent

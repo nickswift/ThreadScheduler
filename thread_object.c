@@ -4,24 +4,22 @@
  * CMPS 111 Spring 2013
  * Authors: Andrew Bao, Konstantin Litovskiy, Tyler Esser & Nick Wood
  */
- 
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
 #include "thread_object.h"
 
 typedef struct ThreadObject {
-	/* stores thread's id, and number of 
-	 * iterations it will perform 
-	 */
-	int id, iteration_time;
-	
-	/* stores thread's creation time */
-	time_t create_time; 
+
+	ucontext_t context;
+	int id;
+	int priority;
+
 } ThreadObject;
 
 /* Constructor */
-TORef newThread(int initID, initIT){	
+TORef newThread(ucontext_t initCtx, int initID, int initPriority){	
 	/* Allocate memory for the new thread objects */
 	TORef thread = malloc(sizeof(ThreadObject));
 	
@@ -29,9 +27,9 @@ TORef newThread(int initID, initIT){
 	time(&tmpTime);
 	
 	/* Set thread data values */
-	thread->id             = initID;
-	thread->iteration_time = initIT;
-	thread->create_time    = tmpTime;
+	thread->context    = initCtx;
+	thread->id         = initID;
+	thread->priority   = initPriority;
 	
 	return(thread);
 }
@@ -43,4 +41,15 @@ void freeThread(TORef T){
         free(*pT);
         *pT = NULL;
     }
+}
+
+/* Accessors */
+ucontext_t getContext(TORef T){
+	return T->context;
+}
+int getID(TORef T){
+	return T->id;
+}
+int getPriority(TORef T){
+    return T->priority;
 }
