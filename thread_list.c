@@ -80,11 +80,11 @@ void freeNode(TNRef *pN){
 /* Clear the list */
 void clearList(TLRef L){
     printf("\n\nClearing the list\n\n");
-    TNRef tmpNode;
-    
+    TNRef tmpNode; 
     /* do the following until L is empty */
     while(!isListEmpty(L)){ 
         printf("Removing a node\n");
+        
         /* check for list front */
         if(L->back == L->front)
             L->front = NULL;
@@ -97,16 +97,13 @@ void clearList(TLRef L){
         /* free the observed node */
         freeNode(&tmpNode);
     }
-    
     /* free the pointer when we're done */
     tmpNode = NULL;
 }
 
 /* Deallocate a list */
 void freeList(TLRef *pL){
-
     clearList(*pL);
-
     if(*pL != NULL){
         free(*pL);
         *pL = NULL;
@@ -157,7 +154,6 @@ void* getIndex(TLRef L, int index){
     return tmpNode->data;
 }
 
-
 /* Print the list */
 void printList(TLRef L){
     /* get first node */
@@ -175,7 +171,7 @@ void printList(TLRef L){
  * The test application
  * uncomment to test the list
  */
-int main(void){
+/* int main(void){
     printf("\nThis is a test of our list\n\n");
     printf("Creating the list...\n");
     
@@ -194,11 +190,10 @@ int main(void){
     int *data = getID(mylist, 3);
     
     printf("\nFound node: %d\n", *data);
-    
-    /*clearList(mylist);*/
+
     printf("Freeing the list...\n");
     
     freeList(&mylist);
     printf("\n\nDone!\n\n");
     return 0;
-}
+} */
