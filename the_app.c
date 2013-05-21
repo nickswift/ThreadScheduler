@@ -23,29 +23,18 @@ void threadFunction();
 /** 
  * threads.c functions
  */
-int thread_yield(){
-    return 0;
-}
-int thread_create(){
-    return 0;
-}
-void thread_exit(){
-}
 
 int main(){
     /* Give srand a seed number */
 	srand(time(NULL));
 
-    /* Create the scheduler*/
-    SLotto scheduler = newLottery(5);
-    
     /* Insert a random number of threads into the scheduler */
 	int threads;
 	for (threads = rand()%254 + 1 ; threads > 0; threads--){
         thread_create(threadFunction, rand()%39 + 0);
 	}
 
-	while(1){
+	while(numThreads() > 1){
 		thread_yield();
 	}
 }

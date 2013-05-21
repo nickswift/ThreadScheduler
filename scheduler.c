@@ -16,6 +16,11 @@
 #include "scheduler.h"
 #include "thread_list.h"
 
+/* Global constants */
+#define THREAD_STACKSIZE 8192
+#define TIMER_Q_SEC 0
+#define TIMER_Q_USEC 300
+
 /* Struct Typedefs */
 typedef struct ThreadObj {
     ucontext_t ctx;
