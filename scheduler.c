@@ -9,19 +9,12 @@
 
 #include <signal.h>
 #include <stdio.h>
-#include <stdlib.h>
-#include <time.h>
 #include <ucontext.h>
 
-#include "scheduler.h"
-<<<<<<< HEAD
-#include "thread_list.h"
+#include <sys/time.h>
 
-/* Global Variables */
-static int gbl_curr_thread;
-static int gbl_curr_thread_priority;
-static int gbl_total_tickets;
-static TLRef gbl_thread_list;
+#include "scheduler.h"
+#include "thread_list.h"
 
 /* Struct Typedefs */
 typedef struct ThreadObj {
@@ -30,11 +23,17 @@ typedef struct ThreadObj {
     int tickets;
 } ThreadObj;
 
+/* Global Variables */
+static int gbl_curr_thread;
+static int gbl_curr_thread_priority;
+static TLRef gbl_thread_list;
+
 /* Functions Declarations */
 void init_scheduler();
 ThreadObj *create_ThreadObj(ucontext_t*, int);
 
 int thread_create(void (*thread_func)(void), int priority){
+    /* sets up the scheduler. only happens once */
     init_scheduler();
 
     /* get a valid context */
@@ -45,137 +44,99 @@ int thread_create(void (*thread_func)(void), int priority){
     pCTX->uc_stack.ss_sp = malloc(THREAD_STACKSIZE);
     pCTX->uc_stack.ss_size = THREAD_STACKSIZE;
 
-    /* TODO: not sure how uc_link is used */
-    pCTX->uc_link = pMainCTX;
+    /* uc_link used if thread exits. using main thread's ctx */
+    pCTX->uc_link = &((ThreadObj)getID(gbl_thread_list, 0)->ctx);
 
-    /* TODO: create thread object to insert into list */
+    /* create thread object to insert into list */
+    insertData(gbl_thread_list, pThrObj, pThrObj->tickets, pThrObj->tid);
 
     /* make the new context with the provided function */
     makecontext(pCTX, thread_func, 0);
 }
 
+void thread_yield(){
+    struct itimerval sched_timer = {0};
+
+    /* turn off timer while in scheduler */
+    setitimer(ITIMER_VIRTUAL, &sched_timer, NULL);
+
+    int old_tid = gbl_curr_thread;
+
+    gbl_curr_thread = lottery();
+
+    /* don't need to swap if it's the same thread */
+    if(old_tid != gbl_curr_thread){
+        swapcontext(&(((ThreadObj)getID(gbl_thread_list,old_tid))->ctx),
+                    &(((ThreadObj)getID(gbl_thread_list,gbl_curr_thread)->ctx);
+    }
+
+    /* restart the timer */
+    struct itimerval new_timer = {0};
+    sched_timer.value.tv_sec = TIMER_Q_SEC;
+    sched_timer.value.tv_usec = TIMER_Q_USEC;
+
+    setitimer(ITIMER_VIRTUAL, &new_timer, NULL);
+    return;
+}
+
+int numThreads(){
+    return getSize(gbl_thread_list);
+}
+
+/* return the thread id of the next thread */
+int lottery(){
+    int totalTickets = getTickets(gbl_thread_list);
+    int goldenTicket = rand() % totalTickets;
+
+    int index;
+    for(index = 0; goldenTicket > 0; index++){
+        /* decrement tickets until negative,
+         * giving the index of the selected thread */
+        goldenTicket -= ((ThreadObj)getIndex(gbl_thread_list, index))->tickets;
+    }
+    return ((ThreadObj)getIndex(gbl_thread_list, index))->tid;
+
+}
+
 ThreadObj *create_ThreadObj(ucontext_t *pCTX, int priority){
-        static totalThreads = 0;
+    static int totalThreads = 0;
 
-        if(priority >= 40 || priority < 0){
-            printf("Thread priority is between 0 (highest) and 39 (lowest)\n");
-            exit(1);
-        }
+    if(priority >= 40 || priority < 0){
+        printf("Thread priority is between 0 (highest) and 39 (lowest)\n");
+        exit(1);
+    }
 
-        ThreadObj *pThrObj = malloc(sizeof(ThreadObj));
+    ThreadObj *pThrObj = malloc(sizeof(ThreadObj));
 
-        /* priority to ticket conversion */
-        int tickets = 40 - priority;
+    /* priority to ticket conversion */
+    int tickets = 40 - priority;
 
-        pThrObj->tickets = tickets;
-        pThrObj->tid = totalThreads++;
+    pThrObj->tickets = tickets;
+    pThrObj->tid = totalThreads++;
+    pThrObj->ctx = *(pCTX);
 
-        return pThrObj;
+    return pThrObj;
 }
 
 void init_scheduler(){
-    static sched_init = 0;
-    if(sched_init == 0){
+    static just_once = 0;
+
+    if(just_once++ == 0){
         gbl_thread_list = newThreadList();
 
         ucontext_t tmpCtx;
         getcontext(&tmpCtx);
 
-        /* Zeroth thread get average priority */
-        ThreadObj *pFirstThreadData = create_ThreadObj(&tmpCtx, 20);
+        /* main thread get average priority */
+        ThreadObj *pThrObj = create_ThreadObj(&tmpCtx, 20);
 
-        add_thread(pFirstThreadData);
+        insertData(gbl_thread_list, pThrObj, pThrObj->tickets, pThrObj->tid);
 
-        /* prevent this function from being called multiple times */
-        sched_init = 1;
+        struct sigaction sched_handler = {0};
+        sched_handler.sa_handler = &thread_yield;
+
+        sigaction(SIGVTALRM, &sched_handler, NULL);
     }
-
     return;
 }
-=======
 
-typedef struct SchedLottery{
-	
-	TLRef threadList;
-	TNRef runningNode;
-	int time_quantum;
-	int winner;
-	
-} SchedLottery;
-
-/* Constructor */
-SLotto newLottery(int initQuantum){
-
-	/* Allocate memory for the new node */
-	SLotto _lotto = malloc(sizeof(SchedLottery));
-
-	/* Seed randomizer */
-	srand (time(NULL));
-
-	/* Set loto data values */
-	_lotto->threadList 	 = newThreadList();
-	_lotto->runningNode  = NULL;
-	_lotto->time_quantum = initQuantum;
-	_lotto->winner 		 = -1;
-	
-	setupTimer(_lotto->time_quantum);
-	return(_lotto);
-}
-
-/* Add a thread to the scheduler */
-void createThread(SLotto S, void *data, int priority){
-    /* Insert the data into the thread list */
-    insertData(S->threadList, data, priority);
-}
-
-void freeSchedLottery(SLotto S){
-    /* Free the running node */
-	/* freeNode(oldLotto->runningNode); */
-	
-	/* free pointer to running node */
-	S->runningNode = NULL;
-	
-	/* Free the list of threads */
-	clearList(S->threadList);
-	freeList(&(S->threadList));
-	
-	/* Free this object */
-	SLotto *pS = &S;
-	free(*pS);
-	*pS = NULL;
-}
-
-void runScheduler(SLotto S){
-	while(1){
-		int run = 1;
-		while(run){
-			if(!isListEmpty(S->threadList)){
-				S->runningNode = getNextNode(S);
-				run = 0;
-			}
-			startTimer(S);
-		}
-	}
-}
-
-TNRef getNextNode(SLotto S){
-    /* Get the thread list */
-	TLRef L     = S->threadList;
-	int tickets = getTickets(L);
-	
-	/* Get a random index and get a node from the list */
-	int newIndex = rand()%tickets+1;
-	TNRef N      = getNodeAtIndex(L, newIndex);
-	
-	return N;
-}
-
-void setupTimer(int timerQuantum){
-}
-
-void stopTimer(SLotto S){
-}
-
-void startTimer(SLotto S){
-}
->>>>>>> 73fd5d501f22e4fcd72e4ad4a0ea9fdc41f07f04
