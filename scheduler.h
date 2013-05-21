@@ -12,6 +12,12 @@
 #ifndef _SCHEDULER_H_INCLUDE
 #define _SCHEDULER_H_INCLUDE
 
+<<<<<<< HEAD
+/* Functions Declarations */
+int thread_create(void (*)(void), int);
+void thread_yield();
+void thread_exit();
+=======
 typedef struct SchedLottery * SLotto;
 
 /* Constructor */
@@ -31,6 +37,7 @@ TNRef getNextNode(SLotto S);
 void setupTimer(int timerQuantum);
 void stopTimer(SLotto S);
 void startTimer(SLotto S);
+>>>>>>> 73fd5d501f22e4fcd72e4ad4a0ea9fdc41f07f04
 
 #endif
 
