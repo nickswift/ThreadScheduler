@@ -19,6 +19,7 @@ struct ThreadListNode {
     struct ThreadListNode * next;
     
     /* Lottery information */
+    int threadID;
     int tickets;
 } ThreadListNode;
 
@@ -46,10 +47,11 @@ TLRef newThreadList(void){
 }
 
 /* A single node insertion wrapper to make this list easier to use */
-void insertData(TLRef L, void * data, int tickets){
+void insertData(TLRef L, int id, void * data, int tickets){
     TNRef _node     = malloc(sizeof(struct ThreadListNode));
     _node->data     = data;
     _node->tickets  = tickets;
+    _node->threadID = id;
     _node->next     = NULL;
     
     if(L->front == NULL){
@@ -86,13 +88,23 @@ void freeNode(TNRef *pN){
 int isListEmpty(TLRef L){
     return (L->front == NULL);
 }
-
 int getTickets(TLRef L){
     return L->numTickets;
 }
-
 int getSize(TLRef L){
     return L->numNodes;
+}
+
+/* find node by given node id */
+TNRef findID(TLRef L, int id){
+    /* get first node */
+    TNRef tmpNode = L->back;
+    
+    /* find the desired ID in the list */
+    while(tmpNode != NULL && id != tmpNode->threadID){
+        tmpNode = tmpNode->next;
+    }
+    return tmpNode;
 }
 
 /* Get a node from a ticket index */
@@ -102,28 +114,23 @@ TNRef getNode(TLRef L, int tIndex){
         printf("Error: trying to find node with invalid ticket number.\n");
         exit(1);
     }
-    
     /* Walk down the list */
     TNRef tmpNode = L->back;
-    int sum      = 0;
-    
+    int sum       = 0;
     while(sum < tIndex){
         sum += tmpNode->tickets;
         if(sum < tIndex){
             tmpNode = tmpNode->next;
         }
     }
-    
     /* we now have our selected node */
     return tmpNode;
 }
 
 /* Get node at list index */
 TNRef getNodeAtIndex(TLRef L, int index){
-    
     int i;
     TNRef tmpNode = L->back;
-    
     /* check range */
     if(index > getSize(L)){
         printf("Error: index for list out of range.\n");
@@ -133,7 +140,6 @@ TNRef getNodeAtIndex(TLRef L, int index){
     for(i=1; i<index; i++){
         tmpNode = tmpNode->next;
     }
-    
     return tmpNode;
 }
 
@@ -179,27 +185,26 @@ void printList(TLRef L){
  * The test application
  * uncomment to test the list
  */
-/*int main(void){
+int main(void){
     printf("\nThis is a test of our list\n\n");
     printf("Creating the list...\n");
-    TLRef mylist = newList();
+    
+    TLRef mylist = newThreadList();
+    
     int d1 = 10;
     int d2 = 20;
     int d3 = 30;
     
-    insertData(mylist, &d1, 10);
-    insertData(mylist, &d2, 15);
-    insertData(mylist, &d3, 20);
+    insertData(mylist, 1, &d1, 10);
+    insertData(mylist, 2, &d2, 15);
+    insertData(mylist, 3, &d3, 20);
     
     
     printList(mylist);
     
-    TNRef tmpNode = getNode(mylist, 25);
+    TNRef tmpNode = findID(mylist, 2);
+    printf("\nFound node: %d\n", tmpNode->threadID);
     
-    printf("\nPicking ticket 25.\nSelected node ticket number: %d\n", tmpNode->tickets);
-    tmpNode = getNodeAtIndex(mylist, 2);
-    printf("Picking node 2\nSelected node ticket number: %d\n", tmpNode->tickets);
-
     tmpNode = NULL;
     
     clearList(mylist);
@@ -208,4 +213,4 @@ void printList(TLRef L){
     freeList(&mylist);
     printf("\n\nDone!\n\n");
     return 0;
-}*/
+}

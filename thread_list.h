@@ -9,7 +9,6 @@
  * as well as identifying information regarding the threads
  * being kept track of.
  */
-
 #ifndef _LIST_H_INCLUDE
 #define _LIST_H_INCLUDE
  
@@ -19,7 +18,7 @@ typedef struct ThreadListNode   * TNRef;
 
 /* Constructors */
 TLRef newThreadList(void);
-void insertData(TLRef L, void * data, int tickets);
+void insertData(TLRef L, int id, void * data, int tickets);
 
 /* Destructors */
 void freeList(TLRef *pL);
@@ -34,11 +33,15 @@ int getTickets(TLRef L);
 /* get list size */
 int getSize(TLRef L);
 
+/* manipulate thread id */
+TNRef findID(TLRef L, int id);
+
 /* Get node by ticket number and list index */
 TNRef getNode(TLRef L, int tIndex);
 TNRef getNodeAtIndex(TLRef L, int index);
 
-/* I'm using this method to seperate making the list empty from 
+/**
+ * I'm using this method to seperate making the list empty from 
  * freeing it.
  */
 void clearList(TLRef L);
