@@ -52,10 +52,13 @@ int thread_create(void (*thread_func)(void), int priority){
     pCTX->uc_stack.ss_size = THREAD_STACKSIZE;
     
     /* uc_link used if thread exits. using main thread's ctx */
-    ThreadObj *pThrObj = getID(gbl_thread_list, 0);
-    pCTX->uc_link      = &(pThrObj->ctx);
-
-    /* create thread object to insert into list */
+    ThreadObj *tmpThr = getID(gbl_thread_list, 0);
+    pCTX->uc_link     = &(tmpThr->ctx);
+    
+    /* make a new thread object */
+    ThreadObj *pThrObj = create_ThreadObj(pCTX, 5);
+    
+    /* insert this thread onto the list */
     insertData(gbl_thread_list, pThrObj->tid, pThrObj, pThrObj->tickets);
 
     /* make the new context with the provided function */
