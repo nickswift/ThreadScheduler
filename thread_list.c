@@ -9,275 +9,199 @@
  * as well as identifying information regarding the threads
  * being kept track of.
  */
-
 #include <stdio.h>
 #include <stdlib.h>
 #include "thread_list.h"
 
-
-
-/* Struct declarations */
-typedef struct ThreadList {
-	/* Number of tickets present in the list */
-	int ticketCount;
-	/* Number of threads in the list */
-	int threadCount;
-	/* Pointers to first and last elements */
-	struct ThreadListNode *front;
-	struct ThreadListNode *back;
-} ThreadList;
-
-typedef struct ThreadListNode {
-	/* pointer to data for the node */
-	void *data;
-	/* tickets in this node */
-	int tickets;
-	/* next node on the list */
-	struct ThreadListNode * next;
+/* The list nodes */
+struct ThreadListNode {
+    void * data;
+    struct ThreadListNode * next;
+    
+    /* Lottery information */
+    int tickets;
 } ThreadListNode;
 
-/* Constructors */
-TLRef newThreadList(void){
-	TLRef _list 		= malloc(sizeof(ThreadList));
-	_list->threadCount 	= 0;
-	_list->ticketCount 	= 0;
-	_list->front 		= NULL;
-	_list->back 		= NULL;
-	return(_list);
+/* The list proper */
+struct ThreadList{
+    struct ThreadListNode * front;
+    struct ThreadListNode * back;
+    
+    /* Lottery information */
+    int numTickets;
+    int numNodes;
+} ThreadList;
+
+/* constructors */
+TLRef newList(void){
+    /* Make the list */
+    TLRef _list         = malloc(sizeof(struct ThreadList));
+    _list->front        = NULL;
+    _list->back         = NULL;
+    
+    /* Setup ticket count and node count */
+    _list->numTickets   = 0;
+    _list->numNodes     = 0;
+    return _list;
 }
 
-TLNodeRef newThreadListNode(void *initData, int initTickets){
-	/* Allocate memory for the new node */
-	TLNodeRef _node = malloc(sizeof(ThreadListNode));
-
-	/* Set node data values */
-	_node->data = initData;
-	_node->next 	= NULL;
-	_node->tickets 	= initTickets;
-
-	return(_node);
+/* A single node insertion wrapper to make this list easier to use */
+void insertData(TLRef L, void * data, int tickets){
+    TNRef _node      = malloc(sizeof(struct ThreadListNode));
+    _node->data     = data;
+    _node->tickets  = tickets;
+    _node->next     = NULL;
+    
+    if(L->front == NULL){
+        // Set front and back to our new node
+        L->front = _node;
+        L->back  = _node;
+    }else{
+        // Put this node on the end.
+        L->front->next  = _node;
+        L->front        = _node;
+    }
+    
+    /* Add ticket number to list head */
+    L->numTickets += tickets;
+    L->numNodes++;
 }
 
-/* Destructors */
-/* Forward declaration to allow use in deconstructors*/
-TLNodeRef popThread(TLRef L); 
-
-void freeThreadList(TLRef * pL){
-	if(pL != NULL && *pL != NULL){
-		/* Free elements on the list */
-		TLNodeRef tmpNode = popThread(*pL);
-
-		while(tmpNode != NULL){
-			freeThreadListNode(&tmpNode); /* free node */
-			tmpNode = popThread(*pL); /* get next node */
-		}
-
-		/* now, free this list */
-		(*pL)->front = NULL;
-		(*pL)->back = NULL;
-		free(*pL);
-		*pL = NULL;
-	}
+/* Deallocate a list */
+void freeList(TLRef *pL){
+    if(*pL != NULL){
+        free(*pL);
+        *pL = NULL;
+    }
+}
+/* Deallocate a node */
+void freeNode(TNRef *pN){
+    if(*pN != NULL){
+        free(*pN);
+        *pN = NULL;
+    }
 }
 
-void freeThreadListNode(TLNodeRef * pN){
-	/* Make sure we're not passing a null pointer */
-	if(pN != NULL && *pN != NULL){
-		/* Free memory at given address and destroy the pointer */
-		free((*pN)->next);
-		free((*pN)->data);
-		free(*pN);
-		*pN = NULL;
-	}
+/* check list emptiness */
+int isEmpty(TLRef L){
+    return (L->front == NULL);
 }
 
-/* Accessors */
-TLNodeRef getFront(TLRef L){
-	/* Error conditions */
-	if(L == NULL){
-		printf("Error: null List reference\n");
-		exit(1);
-	}
-	if(L->front == NULL){
-		printf("Error: Calling getFront() on an empty list\n");
-		exit(1);
-	}
-	return(L->front);
+int getSize(TLRef L){
+    return L->numNodes;
 }
 
-/**
- * Returns the node at index in the list
- * Assuming front is element 0
- */
-TLNodeRef getNodeAtIndex(TLRef L, int index){
-	/* Error conditions */
-	if(L == NULL){
-		printf("Error: null List reference\n");
-		exit(1);
-	}
-	if(index < 0 || index > L->threadCount){
-		printf("Error: given index out of range.\n");
-		exit(1);
-	}
-	
-	TLNodeRef current = getFront(L);
-	while(current != NULL && index > 0)
-	{
-		current = current->next;
-		--index;
-	}
-	
-	return(current);	
+/* Get a node from a ticket index */
+TNRef getNode(TLRef L, int tIndex){
+    /* check range */
+    if(tIndex < 0 || tIndex > L->numTickets){
+        printf("Error: trying to find node with invalid ticket number.\n");
+        exit(1);
+    }
+    
+    /* Walk down the list */
+    TNRef tmpNode = L->back;
+    int sum      = 0;
+    
+    while(sum < tIndex){
+        sum += tmpNode->tickets;
+        if(sum < tIndex){
+            tmpNode = tmpNode->next;
+        }
+    }
+    
+    /* we now have our selected node */
+    return tmpNode;
 }
 
-/**
- * Choose a Node based on ticket count
- * within the list's range of lottery tickets
- */
-TLNodeRef getNodeAtTicket(TLRef L, int numTickets){
-	/* Error conditions */
-	if(L == NULL){
-		printf("Error: null List reference\n");
-		exit(1);
-	}
-	if(numTickets < 0 || numTickets > L->ticketCount){
-		printf("Error: given ticket index out of range.\n");
-		exit(1);
-	}
-
-	/* Set up walk */
-	int tmpIndex 		= numTickets;
-	TLNodeRef current 	= getFront(L);
-
-	/* Walk down the list */
-	while(current != NULL && tmpIndex >= 0){
-		/**
-		 * decrament tmpIndex with the number of tickets at each node
-		 * if tmpIndex remains above 0, move set current to the next node.
-		 */
-		tmpIndex -= current->tickets;
-		if(tmpIndex > 0){
-			current = current->next;
-		}
-	}
-
-	return(current);
+/* Get node at list index */
+TNRef getNodeAtIndex(TLRef L, int index){
+    
+    int i;
+    TNRef tmpNode = L->back;
+    
+    /* check range */
+    if(index > getSize(L)){
+        printf("Error: index for list out of range.\n");
+        exit(1);
+    }
+    /* get the node at given index */
+    for(i=1; i<index; i++){
+        tmpNode = tmpNode->next;
+    }
+    
+    return tmpNode;
 }
 
-/* Mutators */
-void insertNode(TLRef L, TLNodeRef N){
-	/* Insert node on the list */
-	if(L->front == NULL){
-		L->front 	= N;
-		L->back 	= N;
-	}
-	else{
-		L->back->next 	= N;
-		L->back 		= N;
-	}
-
-	/* Add node tickets to ticket count */
-	L->ticketCount += N->tickets;
-	L->threadCount++;
+/* Clear the list */
+void clearList(TLRef L){
+    printf("\n\nClearing the list\n\n");
+    TNRef tmpNode;
+    
+    /* do the following until L is empty */
+    while(!isEmpty(L)){ 
+        printf("Removing a node\n");
+        /* check for list front */
+        if(L->back == L->front)
+            L->front = NULL;
+            
+        /* Get back, move list-back node 
+            pointer forward */     
+        tmpNode = L->back;
+        L->back = L->back->next;
+        
+        /* free the observed node */
+        freeNode(&tmpNode);
+    }
+    
+    /* free the pointer when we're done */
+    tmpNode = NULL;
 }
 
-/**
- * Pop a thread off the back of the list and return
- * the reference to that node.
- */
-TLNodeRef popThread(TLRef L){
-	TLNodeRef tmpNode = NULL;
-	if(L->front != NULL){
-		tmpNode = L->front;
-		if(L->threadCount == 1)
-			L->back = NULL;
-		L->front = L->front->next;
-	}
-
-	L->ticketCount -= tmpNode->tickets;
-	L->threadCount--;
-
-	return(tmpNode);
-}
-
-/* removes node from list */
-TLNodeRef removeNode(TLRef L, int index){
-	/* Error conditions */
-	if(L == NULL){
-		printf("Error: null List reference\n");
-		exit(1);
-	}
-	if(index < 0 || index >= L->threadCount){
-		printf("Error: given index out of range.\n");
-		exit(1);
-	}
-	TLNodeRef tmp = L->front;
-	TLNodeRef target = L->front;
-
-	if(target != NULL){
-		/* searching list for the predecesor to the thread to be deleted */
-		while(index > 0){
-			tmp = target;
-			target = target->next;
-			--index;
-		}
-		if(tmp != target) {
-			tmp->next = target->next;
-			target->next = L->front;
-			L->front = target;
-		}
-		tmp = popThread(L);
-	}
-	
-	return(target);
-}
-
-int isListEmpty(TLRef L){
-	return !(L->threadCount);
-}
-
-/* List Operations */
+/* Print the list */
 void printList(TLRef L){
-	TLNodeRef current = L->front;
-	int index = 0;
-	while(current != NULL){
-		printf("Index: %d | Tickets: %d \n", index, current->tickets);
-		++index;
-		current = current->next;
-	}
-	printf("\nNumber Of Nodes: %d\n", L->threadCount);
-	printf("Total Tickets: %d\n\n", L->ticketCount);
-
+    /* get first node */
+    TNRef tmpNode = L->back;
+    printf("\n\nWalking a list.\n\n");
+    
+    /* print all nodes */
+    while(tmpNode != NULL){
+        printf("Visiting a node. Tickets: %d\n", tmpNode->tickets);
+        tmpNode = tmpNode->next;
+    }
 }
 
- int testThreadList() {
-	int testData = 21;
-	int i;
-	TLRef f = newThreadList();
-	
-	for(i = 0; i < 15; ++i)
-		insertNode(f,newThreadListNode(&testData, i+1));
-		
-	printList(f);
-	
-	if(!isListEmpty(f))
-		printf("List is not Empty.\n\n");
-		
-	popThread(f);
-	printList(f);
-	
-	removeNode(f,0);
-	printList(f);
-	
-	removeNode(f, 10);
-	printList(f);
-	
-	int indexTest = 3;
-	printf("%d tickets: %d\n", indexTest, getNodeAtIndex(f,indexTest)->tickets);
-	
-	int ticketTest = 104;
-	printf("%d tickets: %d\n", ticketTest, getNodeAtTicket(f,ticketTest)->tickets);
- 
-	return 0;
- }
+/**
+ * The test application
+ * uncomment to test the list
+ */
+/*int main(void){
+    printf("\nThis is a test of our list\n\n");
+    printf("Creating the list...\n");
+    TLRef mylist = newList();
+    int d1 = 10;
+    int d2 = 20;
+    int d3 = 30;
+    
+    insertData(mylist, &d1, 10);
+    insertData(mylist, &d2, 15);
+    insertData(mylist, &d3, 20);
+    
+    
+    printList(mylist);
+    
+    TNRef tmpNode = getNode(mylist, 25);
+    
+    printf("\nPicking ticket 25.\nSelected node ticket number: %d\n", tmpNode->tickets);
+    tmpNode = getNodeAtIndex(mylist, 2);
+    printf("Picking node 2\nSelected node ticket number: %d\n", tmpNode->tickets);
 
+    tmpNode = NULL;
+    
+    clearList(mylist);
+    printf("Freeing the list...\n");
+    
+    freeList(&mylist);
+    printf("\n\nDone!\n\n");
+    return 0;
+}*/

@@ -10,31 +10,37 @@
  * being kept track of.
  */
 
-#ifndef _THREADLIST_H_INCLUDE
-#define _THREADLIST_H_INCLUDE
-
-/* Exported Types */
-typedef struct ThreadList *TLRef;
-typedef struct ThreadListNode *TLNodeRef;
+#ifndef _LIST_H_INCLUDE
+#define _LIST_H_INCLUDE
+ 
+/* Define struct references */
+typedef struct ThreadList       * TLRef;
+typedef struct ThreadListNode   * TNRef;
 
 /* Constructors */
-TLRef newThreadList(void);
-TLNodeRef newThreadListNode(void *initData, int initTickets);
+TLRef newList(void);
+void insertData(TLRef L, void * data, int tickets);
 
 /* Destructors */
-void freeThreadList(TLRef *pL);
-void freeThreadListNode(TLNodeRef *pN);
+void freeList(TLRef *pL);
+void freeNode(TNRef *pN);
 
-/* Accessors */
-TLNodeRef getFront(TLRef L);
-TLNodeRef getNodeAtIndex(TLRef L, int index);
-TLNodeRef getNodeAtTicket(TLRef L, int numTickets);
-int isListEmpty(TLRef L);
+/* check for list emptiness */
+int isEmpty(TLRef L);
 
-/* Mutators */
-void insertNode(TLRef L, TLNodeRef N);
-TLNodeRef removeNode(TLRef L, int index);
+/* get list size */
+int getSize(TLRef L);
 
-/* List Operations */
+/* Get node by ticket number and list index */
+TNRef getNode(TLRef L, int tIndex);
+TNRef getNodeAtIndex(TLRef L, int index);
+
+/* I'm using this method to seperate making the list empty from 
+ * freeing it.
+ */
+void clearList(TLRef L);
+
+/* Look at the contents */
 void printList(TLRef L);
+
 #endif
