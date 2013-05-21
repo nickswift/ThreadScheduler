@@ -69,78 +69,12 @@ void insertData(TLRef L, int id, void * data, int tickets){
     L->numNodes++;
 }
 
-/* Deallocate a list */
-void freeList(TLRef *pL){
-    if(*pL != NULL){
-        free(*pL);
-        *pL = NULL;
-    }
-}
 /* Deallocate a node */
 void freeNode(TNRef *pN){
     if(*pN != NULL){
         free(*pN);
         *pN = NULL;
     }
-}
-
-/* check list emptiness */
-int isListEmpty(TLRef L){
-    return (L->front == NULL);
-}
-int getTickets(TLRef L){
-    return L->numTickets;
-}
-int getSize(TLRef L){
-    return L->numNodes;
-}
-
-/* find node by given node id */
-TNRef findID(TLRef L, int id){
-    /* get first node */
-    TNRef tmpNode = L->back;
-    
-    /* find the desired ID in the list */
-    while(tmpNode != NULL && id != tmpNode->threadID){
-        tmpNode = tmpNode->next;
-    }
-    return tmpNode;
-}
-
-/* Get a node from a ticket index */
-TNRef getNode(TLRef L, int tIndex){
-    /* check range */
-    if(tIndex < 0 || tIndex > L->numTickets){
-        printf("Error: trying to find node with invalid ticket number.\n");
-        exit(1);
-    }
-    /* Walk down the list */
-    TNRef tmpNode = L->back;
-    int sum       = 0;
-    while(sum < tIndex){
-        sum += tmpNode->tickets;
-        if(sum < tIndex){
-            tmpNode = tmpNode->next;
-        }
-    }
-    /* we now have our selected node */
-    return tmpNode;
-}
-
-/* Get node at list index */
-TNRef getNodeAtIndex(TLRef L, int index){
-    int i;
-    TNRef tmpNode = L->back;
-    /* check range */
-    if(index > getSize(L)){
-        printf("Error: index for list out of range.\n");
-        exit(1);
-    }
-    /* get the node at given index */
-    for(i=1; i<index; i++){
-        tmpNode = tmpNode->next;
-    }
-    return tmpNode;
 }
 
 /* Clear the list */
@@ -167,6 +101,62 @@ void clearList(TLRef L){
     /* free the pointer when we're done */
     tmpNode = NULL;
 }
+
+/* Deallocate a list */
+void freeList(TLRef *pL){
+
+    clearList(*pL);
+
+    if(*pL != NULL){
+        free(*pL);
+        *pL = NULL;
+    }
+}
+
+/* check list emptiness */
+int isListEmpty(TLRef L){
+    return (L->front == NULL);
+}
+int getTickets(TLRef L){
+    return L->numTickets;
+}
+int getSize(TLRef L){
+    return L->numNodes;
+}
+
+/* Get data off of the front */
+void* getFront(TLRef L){
+    return L->front->data;
+}
+
+/* find data by given node id */
+void* getID(TLRef L, int id){
+    /* get first node */
+    TNRef tmpNode = L->back;
+    
+    /* find the desired ID in the list */
+    while(tmpNode != NULL && id != tmpNode->threadID){
+        tmpNode = tmpNode->next;
+    }
+    return tmpNode->data;
+}
+
+/* Get data at list index */
+void* getIndex(TLRef L, int index){
+    int i;
+    TNRef tmpNode = L->back;
+    /* check range */
+    if(index > getSize(L)){
+        printf("Error: index for list out of range.\n");
+        exit(1);
+    }
+    /* get the node at given index */
+    for(i=1; i<index; i++){
+        tmpNode = tmpNode->next;
+    }
+    return tmpNode->data;
+}
+
 
 /* Print the list */
 void printList(TLRef L){
@@ -198,16 +188,14 @@ int main(void){
     insertData(mylist, 1, &d1, 10);
     insertData(mylist, 2, &d2, 15);
     insertData(mylist, 3, &d3, 20);
-    
-    
+      
     printList(mylist);
     
-    TNRef tmpNode = findID(mylist, 2);
-    printf("\nFound node: %d\n", tmpNode->threadID);
+    int *data = getID(mylist, 3);
     
-    tmpNode = NULL;
+    printf("\nFound node: %d\n", *data);
     
-    clearList(mylist);
+    /*clearList(mylist);*/
     printf("Freeing the list...\n");
     
     freeList(&mylist);

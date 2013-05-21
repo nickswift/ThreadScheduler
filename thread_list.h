@@ -33,12 +33,10 @@ int getTickets(TLRef L);
 /* get list size */
 int getSize(TLRef L);
 
-/* manipulate thread id */
-TNRef findID(TLRef L, int id);
-
-/* Get node by ticket number and list index */
-TNRef getNode(TLRef L, int tIndex);
-TNRef getNodeAtIndex(TLRef L, int index);
+/* Get data out of the list */
+void* getFront(TLRef L);
+void* getID(TLRef L, int id);
+void* getIndex(TLRef L, int index);
 
 /**
  * I'm using this method to seperate making the list empty from 
