@@ -50,7 +50,7 @@ int thread_create(void (*thread_func)(void), int priority){
     /* give context new stack to separate from other contexts */
     pCTX->uc_stack.ss_sp = malloc(THREAD_STACKSIZE);
     pCTX->uc_stack.ss_size = THREAD_STACKSIZE;
-    
+
     /* uc_link used if thread exits. using main thread's ctx */
     ThreadObj *pThrObj = getID(gbl_thread_list, 0);
     pCTX->uc_link      = &(pThrObj->ctx);
@@ -74,10 +74,10 @@ void thread_yield(){
 
     /* don't need to swap if it's the same thread */
     if(old_tid != gbl_curr_thread){
-        
+
         ThreadObj *thrOne = getID(gbl_thread_list,old_tid);
         ThreadObj *thrTwo = getID(gbl_thread_list,gbl_curr_thread);
-    
+
         swapcontext(&(thrOne->ctx),&(thrTwo->ctx));
     }
 
@@ -144,7 +144,7 @@ void init_scheduler(){
         /* main thread get average priority */
         ThreadObj *pThrObj = create_ThreadObj(&tmpCtx, 20);
 
-        insertData(gbl_thread_list, pThrObj, pThrObj->tickets, pThrObj->tid);
+        insertData(gbl_thread_list, pThrObj->tid, pThrObj, pThrObj->tickets);
 
         struct sigaction sched_handler = {0};
         sched_handler.sa_handler = &thread_yield;
