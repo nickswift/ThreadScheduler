@@ -32,11 +32,11 @@ typedef struct ThreadObj {
 
 /* Global Variables */
 static int gbl_curr_thread;
-static int gbl_curr_thread_priority;
 static TLRef gbl_thread_list;
 
 /* Functions Declarations */
 void init_scheduler();
+int lottery();
 ThreadObj *create_ThreadObj(ucontext_t*, int);
 
 int thread_create(void (*thread_func)(void), int priority){
@@ -52,14 +52,19 @@ int thread_create(void (*thread_func)(void), int priority){
     pCTX->uc_stack.ss_size = THREAD_STACKSIZE;
 
     /* uc_link used if thread exits. using main thread's ctx */
-    ThreadObj *pThrObj = getID(gbl_thread_list, 0);
-    pCTX->uc_link      = &(pThrObj->ctx);
+    ThreadObj *pMainThrObj = getID(gbl_thread_list, 0);
+    pCTX->uc_link      = &(pMainThrObj->ctx);
 
-    /* create thread object to insert into list */
+    /* make a thread object with the context */
+    ThreadObj *pThrObj = create_ThreadObj(pCTX, priority);
+
+    /* insert thread object into list */
     insertData(gbl_thread_list, pThrObj->tid, pThrObj, pThrObj->tickets);
 
     /* make the new context with the provided function */
-    makecontext(pCTX, thread_func, 0);
+    makecontext(&(pThrObj->ctx), thread_func, 0);
+
+    return 0;
 }
 
 void thread_yield(){
@@ -83,10 +88,22 @@ void thread_yield(){
 
     /* restart the timer */
     struct itimerval new_timer = {0};
-    sched_timer.value.tv_sec  = TIMER_Q_SEC;
-    sched_timer.value.tv_usec = TIMER_Q_USEC;
+    sched_timer.it_value.tv_sec  = TIMER_Q_SEC;
+    sched_timer.it_value.tv_usec = TIMER_Q_USEC;
 
     setitimer(ITIMER_VIRTUAL, &new_timer, NULL);
+    return;
+}
+
+void thread_exit(){
+    removeID(gbl_thread_list, gbl_curr_thread);
+
+    gbl_curr_thread = lottery();
+
+    ThreadObj *pThrObj = getID(gbl_thread_list, gbl_curr_thread);
+
+    setcontext(&(pThrObj->ctx));
+
     return;
 }
 
@@ -133,7 +150,7 @@ ThreadObj *create_ThreadObj(ucontext_t *pCTX, int priority){
 }
 
 void init_scheduler(){
-    static just_once = 0;
+    static int just_once = 0;
 
     if(just_once++ == 0){
         gbl_thread_list = newThreadList();

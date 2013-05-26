@@ -4,7 +4,7 @@
 
 TARGET=scheduler
 CC=gcc
-OBJS=the_app.o scheduler.o thread_object.o thread_list.o
+OBJS=the_app.o scheduler.o thread_list.o
 CFLAGS=-Wall -Wextra -O2
 GCC_IGNORE_STRUCT_INIT=-Wno-missing-field-initializers -Wno-missing-braces
 FORMAT=indent
@@ -20,7 +20,7 @@ $(TARGET): $(OBJS)
 	$(CC) -o $@ $^
 
 %.o: %.c
-	$(CC) -c -o $@ $< $(CFLAGS)
+	$(CC) -c -o $@ $< $(CFLAGS) $(GCC_IGNORE_STRUCT_INIT)
 	
 format: $(FORMAT_TARGET)
 	$(FORMAT) $(FORMAT_FLAGS) $@
