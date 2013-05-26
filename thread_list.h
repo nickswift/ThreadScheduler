@@ -36,7 +36,10 @@ int getSize(TLRef L);
 /* Get data out of the list */
 void* getFront(TLRef L);
 void* getID(TLRef L, int id);
+int   getID_tickets(TLRef L, int id);
 void* getIndex(TLRef L, int index);
+
+void removeID(TLRef L, int id);
 
 /**
  * I'm using this method to seperate making the list empty from 

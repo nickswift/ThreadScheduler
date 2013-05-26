@@ -137,6 +137,16 @@ void* getID(TLRef L, int id){
     }
     return tmpNode->data;
 }
+int getID_tickets(TLRef L, int id){
+	/* get first node */
+    TNRef tmpNode = L->back;
+    
+    /* find the desired ID in the list */
+    while(tmpNode != NULL && id != tmpNode->threadID){
+        tmpNode = tmpNode->next;
+    }
+    return tmpNode->tickets;
+}
 
 /* Get data at list index */
 void* getIndex(TLRef L, int index){
@@ -152,6 +162,23 @@ void* getIndex(TLRef L, int index){
         tmpNode = tmpNode->next;
     }
     return tmpNode->data;
+}
+
+/* Remove node by ID */
+void removeID(TLRef L, int id){
+	TNRef tmpNode = L->back;
+	TNRef prev    = NULL;
+	
+	/* find the desired ID in the list */
+    while(tmpNode != NULL && id != tmpNode->threadID){
+    	prev	= tmpNode;
+        tmpNode = tmpNode->next;
+    }
+    /* Patch up connections */
+    prev->next = tmpNode->next;
+    
+    /* Free the node */
+	freeNode(&tmpNode);
 }
 
 /* Print the list */

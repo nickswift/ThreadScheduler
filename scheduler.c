@@ -16,7 +16,6 @@
 #include <sys/time.h>
 
 #include "scheduler.h"
-#include "thread_list.h"
 
 /* Global constants */
 #define THREAD_STACKSIZE 8192
@@ -147,6 +146,19 @@ ThreadObj *create_ThreadObj(ucontext_t *pCTX, int priority){
     pThrObj->ctx = *(pCTX);
 
     return pThrObj;
+}
+
+/* return static variables */
+int get_gbl_thread(){
+	return gbl_curr_thread;
+}
+
+int get_gbl_curr_thread_tickets(TLRef L){
+	
+}
+
+TLRef get_gbl_thread_list(){
+	return gbl_thread_list;
 }
 
 void init_scheduler(){
