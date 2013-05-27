@@ -31,9 +31,10 @@ int main(){
 	for (threads = rand()%254 + 1 ; threads > 0; threads--){
         thread_create(threadFunction, rand()%39 + 0);
 	}
-	printf("Threads inserted\n");
+	printf("Threads inserted\n\n");
 	
 	while(numThreads() > 1){
+		printf("Thread yielding\n");
 		thread_yield();
 	}
 	

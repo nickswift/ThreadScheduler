@@ -19,7 +19,6 @@ int numThreads();
 
 /* Export file-wide globals */
 int get_gbl_curr_thread();
-int get_gbl_curr_thread_tickets(TLRef L);
 TLRef get_gbl_thread_list();
 
 #endif

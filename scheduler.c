@@ -71,25 +71,31 @@ void thread_yield(){
 
     /* turn off timer while in scheduler */
     setitimer(ITIMER_VIRTUAL, &sched_timer, NULL);
-
+	
     int old_tid = gbl_curr_thread;
 
     gbl_curr_thread = lottery();
+    
+    printf("Thread ID is %d\n", gbl_curr_thread);
 
     /* don't need to swap if it's the same thread */
     if(old_tid != gbl_curr_thread){
-
+    	
         ThreadObj *thrOne = getID(gbl_thread_list,old_tid);
         ThreadObj *thrTwo = getID(gbl_thread_list,gbl_curr_thread);
+        
+        ucontext_t ctxone = thrOne->ctx;
+        ucontext_t ctxtwo = thrTwo->ctx;
 
-        swapcontext(&(thrOne->ctx),&(thrTwo->ctx));
+        /* PROBLEM HERE */
+        swapcontext(&ctxone,&ctxtwo);
     }
 
     /* restart the timer */
     struct itimerval new_timer = {0};
     sched_timer.it_value.tv_sec  = TIMER_Q_SEC;
     sched_timer.it_value.tv_usec = TIMER_Q_USEC;
-
+	
     setitimer(ITIMER_VIRTUAL, &new_timer, NULL);
     return;
 }
@@ -114,18 +120,19 @@ int numThreads(){
 int lottery(){
     int totalTickets = getTickets(gbl_thread_list);
     int goldenTicket = rand() % totalTickets;
+    TNRef tobj;
 
     int index;
     for(index = 0; goldenTicket > 0; index++){
         /* decrement tickets until negative,
          * giving the index of the selected thread */
-        ThreadObj *tobj = getIndex(gbl_thread_list, index);
-        goldenTicket   -= tobj->tickets;
+        tobj    	  = getIndexNode(gbl_thread_list, index);
+        goldenTicket -= tobj->tickets;
     }
     /* get returned value */
-    ThreadObj *retobj = getIndex(gbl_thread_list, index);
-    return retobj->tid;
-
+    tobj = getIndexNode(gbl_thread_list, index);
+    
+    return tobj->threadID;
 }
 
 ThreadObj *create_ThreadObj(ucontext_t *pCTX, int priority){
@@ -151,10 +158,6 @@ ThreadObj *create_ThreadObj(ucontext_t *pCTX, int priority){
 /* return static variables */
 int get_gbl_thread(){
 	return gbl_curr_thread;
-}
-
-int get_gbl_curr_thread_tickets(TLRef L){
-	
 }
 
 TLRef get_gbl_thread_list(){

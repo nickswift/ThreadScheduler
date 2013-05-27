@@ -11,6 +11,26 @@
  */
 #ifndef _LIST_H_INCLUDE
 #define _LIST_H_INCLUDE
+
+/* The list nodes */
+struct ThreadListNode {
+    void * data;
+    struct ThreadListNode * next;
+    
+    /* Lottery information */
+    int threadID;
+    int tickets;
+} ThreadListNode;
+
+/* The list proper */
+struct ThreadList{
+    struct ThreadListNode * front;
+    struct ThreadListNode * back;
+    
+    /* Lottery information */
+    int numTickets;
+    int numNodes;
+} ThreadList;
  
 /* Define struct references */
 typedef struct ThreadList       * TLRef;
@@ -38,6 +58,7 @@ void* getFront(TLRef L);
 void* getID(TLRef L, int id);
 int   getID_tickets(TLRef L, int id);
 void* getIndex(TLRef L, int index);
+TNRef getIndexNode(TLRef L, int index);
 
 void removeID(TLRef L, int id);
 

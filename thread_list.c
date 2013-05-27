@@ -13,26 +13,6 @@
 #include <stdlib.h>
 #include "thread_list.h"
 
-/* The list nodes */
-struct ThreadListNode {
-    void * data;
-    struct ThreadListNode * next;
-    
-    /* Lottery information */
-    int threadID;
-    int tickets;
-} ThreadListNode;
-
-/* The list proper */
-struct ThreadList{
-    struct ThreadListNode * front;
-    struct ThreadListNode * back;
-    
-    /* Lottery information */
-    int numTickets;
-    int numNodes;
-} ThreadList;
-
 /* constructors */
 TLRef newThreadList(void){
     /* Make the list */
@@ -150,8 +130,13 @@ int getID_tickets(TLRef L, int id){
 
 /* Get data at list index */
 void* getIndex(TLRef L, int index){
-    int i;
+    TNRef tmpNode = getIndexNode(L, index);
+    return tmpNode->data;
+}
+TNRef getIndexNode(TLRef L, int index){
+	int i;
     TNRef tmpNode = L->back;
+    
     /* check range */
     if(index > getSize(L)){
         printf("Error: index for list out of range.\n");
@@ -161,7 +146,7 @@ void* getIndex(TLRef L, int index){
     for(i=1; i<index; i++){
         tmpNode = tmpNode->next;
     }
-    return tmpNode->data;
+    return tmpNode;
 }
 
 /* Remove node by ID */
