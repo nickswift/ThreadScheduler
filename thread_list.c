@@ -113,13 +113,25 @@ int getSize(TLRef L){
 /* get node data by id */
 void* getID(TLRef L, int ID){
     /* get first node */
-    TNRef tmpNode = L->back;
+    TNRef tmpNode = L->front;
     
     /* find the desired ID in the list */
     while(tmpNode != NULL && id != tmpNode->threadID){
         tmpNode = tmpNode->next;
     }
     return tmpNode->data;
+}
+
+void removeID(TLRef L, int ID){
+	/* get first node */
+    TNRef tmpNode = L->front;
+    
+    /* find the desired ID in the list */
+    while(tmpNode != NULL && id != tmpNode->threadID){
+        tmpNode = tmpNode->next;
+    }
+    
+    freeNode(L, &tmpNode);
 }
 
 /* Print the list */
