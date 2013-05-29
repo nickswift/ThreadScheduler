@@ -54,28 +54,33 @@ void insertData(TLRef L, int id, void * data, int tickets){
 
 /* Deallocate a node */
 void freeNode(TLRef L, TNRef *pN){
+	/* Delete the node */
+    if(*pN != NULL){
+    	TNRef N         = *pN;
+    	L->ticketCount -= N->tickets;
+    	
+        free(*pN);
+        *pN = NULL;
+    }
+}
+
+/* excise a node */
+void exciseNode(TLRef L, TNRef N){
     /* get the current node, set up previous */
     TNRef tmp     = L->front;
     TNRef tmpPrev = tmp;
     
-    while(tmp != NULL && tmp != *pN){
+    while(tmp != NULL && tmp != N){
     	tmpPrev = tmp;
     	tmp = tmp->next;
     }
+    if(tmp == NULL)
+    	return;
+    
     /* patch up old connections */
     tmpPrev->next = tmp->next;
     
-    /* Decrement number of tickets in the list */
-    L->ticketCount -= tmp->tickets;
-    
-    /* Not sure if this is necessary */
-    /* tmp = tmpPrev = NULL; */
-
-    /* Delete the node */
-    if(*pN != NULL){
-        free(*pN);
-        *pN = NULL;
-    }
+    freeNode(L, &N);
 }
 
 /* Clear the list */
@@ -84,20 +89,19 @@ void clearList(TLRef L){
     TNRef tmpNode;
     
     /* do the following until L is empty */
-    while(!isListEmpty(L)){
-    
+    while(!isListEmpty(L)){   
+        /* Get back, move list-back node 
+            pointer forward */     
+        tmpNode  = L->front;
+       	L->front = L->front->next;
+        
         /* check for list front */
         if(L->front == L->back){
         	L->back = NULL;
         }
-            
-        /* Get back, move list-back node 
-            pointer forward */     
-        tmpNode  = L->front;
-        L->front = L->front->next;
         
         /* free the observed node */
-        freeNode(L, &tmpNode);
+		freeNode(L, &tmpNode);
     }
     /* free the pointer when we're done */
     tmpNode = NULL;
@@ -105,7 +109,9 @@ void clearList(TLRef L){
 
 /* Deallocate a list */
 void freeList(TLRef *pL){
+	
     clearList(*pL);
+    
     if(*pL != NULL){
         free(*pL);
         *pL = NULL;
@@ -129,10 +135,21 @@ void* getID(TLRef L, int ID){
     TNRef tmpNode = L->front;
     
     /* find the desired ID in the list */
-    while(tmpNode != NULL && id != tmpNode->threadID){
+    while(tmpNode != NULL && ID != tmpNode->threadID){
         tmpNode = tmpNode->next;
     }
     return tmpNode->data;
+}
+/* returns # of tickets at id*/
+int getID_tickets(TLRef L, int ID){
+    /* get first node */
+    TNRef tmpNode = L->front;
+    
+    /* find the desired ID in the list */
+    while(tmpNode != NULL && ID != tmpNode->threadID){
+        tmpNode = tmpNode->next;
+    }
+    return tmpNode->tickets;
 }
 
 void removeID(TLRef L, int ID){
@@ -140,7 +157,7 @@ void removeID(TLRef L, int ID){
     TNRef tmpNode = L->front;
     
     /* find the desired ID in the list */
-    while(tmpNode != NULL && id != tmpNode->threadID){
+    while(tmpNode != NULL && ID != tmpNode->threadID){
         tmpNode = tmpNode->next;
     }
     
@@ -158,8 +175,42 @@ void printList(TLRef L){
         printf("(%d)->", tmpNode->threadID);
         tmpNode = tmpNode->next;
     }
-    printf("NULL");
+    printf("[NULL]\n");
     return;
+}
+
+/**
+ * Choose a thread corresponding to a ticket
+ * within the list's range of lottery tickets
+ */
+TNRef getNodeAtTicket(TLRef L, int winning_ticket){
+	// Error conditions
+	if(L == NULL){
+		printf("Error: null List reference\n");
+		exit(1);
+	}
+	if(winning_ticket < 0 || winning_ticket > L->ticketCount){
+		printf("Error: given index out of range.");
+		exit(1);
+	}
+
+	/* Set up walk */
+	int tmpIndex = winning_ticket;
+	TNRef current = L->front;
+
+	/* Walk down the list */
+	while(current != NULL && tmpIndex > 0){
+		/** 
+		 * decrement tmpIndex with the number of tickets at each node
+		 * if tmpIndex remains above 0, move set current to the next node. 
+		 */
+		tmpIndex -= current->tickets;
+		if(tmpIndex > 0){
+			current = current->next;
+		}
+	}
+
+	return(current);
 }
 
 /*int main(void){
@@ -178,6 +229,20 @@ void printList(TLRef L){
 	
 	printList(_list);
 	
+	/*TNRef tmpnode = _list->front->next;*/
+	
+	/*freeNode(_list, &tmpnode);
+	
+	printList(_list);
+	
 	freeList(&_list);
+	
+	printf("DONE\n");
+	*/
+	
+/*	freeList(&_list);
+	
+	printf("done");
 	return 0;
-}*/
+}
+*/

@@ -43,6 +43,7 @@ void insertData(TLRef L, int id, void * data, int tickets);
 /* Destructors */
 void freeList(TLRef *pL);
 void freeNode(TLRef L, TNRef *pN);
+void exciseNode(TLRef L, TNRef N);
 
 /* check for list emptiness */
 int isListEmpty(TLRef L);
@@ -56,6 +57,9 @@ int getSize(TLRef L);
 /* Get thread data by id */
 void* getID(TLRef L, int ID);
 
+/* returns # of tickets at id*/
+int getID_tickets(TLRef L, int ID);
+
 /* Remove thread by ID */
 void removeID(TLRef L, int ID);
 
@@ -64,6 +68,9 @@ void removeID(TLRef L, int ID);
  * freeing it.
  */
 void clearList(TLRef L);
+
+/* get's the node that won the lotto */
+TNRef getNodeAtTicket(TLRef L, int winning_ticket);
 
 /* Look at the contents */
 void printList(TLRef L);

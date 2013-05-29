@@ -20,7 +20,7 @@
 /* Global constants */
 #define THREAD_STACKSIZE 8192
 #define TIMER_Q_SEC 0
-#define TIMER_Q_USEC 300
+#define TIMER_Q_USEC 5
 
 /* Struct Typedefs */
 typedef struct ThreadObj {
@@ -87,6 +87,13 @@ void thread_yield(){
         ucontext_t ctxone = thrOne->ctx;
         ucontext_t ctxtwo = thrTwo->ctx;
 
+		/* restart the timer */
+		struct itimerval new_timer = {0};
+		sched_timer.it_value.tv_sec  = TIMER_Q_SEC;
+		sched_timer.it_value.tv_usec = TIMER_Q_USEC;
+		
+		setitimer(ITIMER_VIRTUAL, &new_timer, NULL);
+		
         /* PROBLEM HERE */
         swapcontext(&ctxone,&ctxtwo);
     }
@@ -118,21 +125,13 @@ int numThreads(){
 
 /* return the thread id of the next thread */
 int lottery(){
-    int totalTickets = getTickets(gbl_thread_list);
-    int goldenTicket = rand() % totalTickets;
-    TNRef tobj;
-
-    int index;
-    for(index = 0; goldenTicket > 0; index++){
-        /* decrement tickets until negative,
-         * giving the index of the selected thread */
-        tobj    	  = getIndexNode(gbl_thread_list, index);
-        goldenTicket -= tobj->tickets;
-    }
-    /* get returned value */
-    tobj = getIndexNode(gbl_thread_list, index);
+	int goldenTicket = rand() % getTickets(gbl_thread_list) + 1;
+	
+	TNRef _tobj = getNodeAtTicket(gbl_thread_list, goldenTicket);
+	 	
+	printf("Lotto Finished\n");
     
-    return tobj->threadID;
+    return _tobj->threadID;
 }
 
 ThreadObj *create_ThreadObj(ucontext_t *pCTX, int priority){

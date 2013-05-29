@@ -48,18 +48,21 @@ int main(){
  */
 void threadFunction(){
 	int runTime;
+	int ctid;
 
-	for( runTime = rand()%300 + 100; runTime > 0; runTime--){
+	for( runTime = rand()%100 + 50; runTime > 0; runTime--){
 		
-		int ctid 		= get_gbl_thread();
+		ctid 		= get_gbl_thread();
 		TLRef tmpL 		= get_gbl_thread_list();
 		int ct_tickets 	= getID_tickets(tmpL, ctid);
 	
 		printf("I am Thread %d, with %d Tickets\n", ctid, ct_tickets);
 
-		if(rand()%10==0){
+		if(rand()%100 < 5){
+			printf("Thread ID %d Yielding\n",ctid);
 			thread_yield();
 		}
 	}
+	printf("Thread ID %d Exiting\n", ctid);
 	thread_exit();
 }
