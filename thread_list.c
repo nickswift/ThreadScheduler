@@ -17,18 +17,21 @@
 TLRef newThreadList(void){
     /* Make the list */
     TLRef _list         = malloc(sizeof(struct ThreadList));
-    _list->front        = NULL;
-    _list->back         = NULL;
     
+    _list->back         = NULL;
+    _list->front        = NULL;
+   
     /* Setup ticket count and node count */
-    _list->numTickets   = 0;
-    _list->numNodes     = 0;
+    _list->ticketCount = 0;
+    _list->nodeCount   = 0;
     return _list;
 }
 
 /* A single node insertion wrapper to make this list easier to use */
 void insertData(TLRef L, int id, void * data, int tickets){
+
     TNRef _node     = malloc(sizeof(struct ThreadListNode));
+    
     _node->data     = data;
     _node->tickets  = tickets;
     _node->threadID = id;
@@ -40,17 +43,22 @@ void insertData(TLRef L, int id, void * data, int tickets){
         L->back  = _node;
     }else{
         // Put this node on the end.
-        L->front->next  = _node;
-        L->front        = _node;
+        L->back->next  = _node;
+        L->back        = _node;
     }
     
     /* Add ticket number to list head */
-    L->numTickets += tickets;
-    L->numNodes++;
+    L->ticketCount += tickets;
+    L->nodeCount++;
 }
 
 /* Deallocate a node */
-void freeNode(TNRef *pN){
+void freeNode(TLRef L, TNRef *pN){
+	/* Decrement number of tickets in the list */
+	TNRef tmp = *pN;
+	L->ticketCount -= tmp->tickets;
+
+	/* Delete the node */
     if(*pN != NULL){
         free(*pN);
         *pN = NULL;
@@ -60,22 +68,23 @@ void freeNode(TNRef *pN){
 /* Clear the list */
 void clearList(TLRef L){
     printf("\n\nClearing the list\n\n");
-    TNRef tmpNode; 
+    TNRef tmpNode;
+    
     /* do the following until L is empty */
-    while(!isListEmpty(L)){ 
-        printf("Removing a node\n");
-        
+    while(!isListEmpty(L)){
+    
         /* check for list front */
-        if(L->back == L->front)
-            L->front = NULL;
+        if(L->front == L->back){
+        	L->back = NULL;
+        }
             
         /* Get back, move list-back node 
             pointer forward */     
-        tmpNode = L->back;
-        L->back = L->back->next;
+        tmpNode  = L->front;
+        L->front = L->front->next;
         
         /* free the observed node */
-        freeNode(&tmpNode);
+        freeNode(L, &tmpNode);
     }
     /* free the pointer when we're done */
     tmpNode = NULL;
@@ -92,120 +101,46 @@ void freeList(TLRef *pL){
 
 /* check list emptiness */
 int isListEmpty(TLRef L){
-    return (L->front == NULL);
+	return (L->ticketCount <= 0);
 }
 int getTickets(TLRef L){
-    return L->numTickets;
+    return L->ticketCount;
 }
 int getSize(TLRef L){
-    return L->numNodes;
-}
-
-/* Get data off of the front */
-void* getFront(TLRef L){
-    return L->front->data;
-}
-
-/* find data by given node id */
-void* getID(TLRef L, int id){
-    /* get first node */
-    TNRef tmpNode = L->back;
-    
-    /* find the desired ID in the list */
-    while(tmpNode != NULL && id != tmpNode->threadID){
-        tmpNode = tmpNode->next;
-    }
-    return tmpNode->data;
-}
-int getID_tickets(TLRef L, int id){
-	/* get first node */
-    TNRef tmpNode = L->back;
-    
-    /* find the desired ID in the list */
-    while(tmpNode != NULL && id != tmpNode->threadID){
-        tmpNode = tmpNode->next;
-    }
-    return tmpNode->tickets;
-}
-
-/* Get data at list index */
-void* getIndex(TLRef L, int index){
-    TNRef tmpNode = getIndexNode(L, index);
-    return tmpNode->data;
-}
-TNRef getIndexNode(TLRef L, int index){
-	int i;
-    TNRef tmpNode = L->back;
-    
-    /* check range */
-    if(index > getSize(L)){
-        printf("Error: index for list out of range.\n");
-        exit(1);
-    }
-    /* get the node at given index */
-    for(i=1; i<index; i++){
-        tmpNode = tmpNode->next;
-    }
-    return tmpNode;
-}
-
-/* Remove node by ID */
-void removeID(TLRef L, int id){
-	TNRef tmpNode = L->back;
-	TNRef prev    = NULL;
-	
-	/* find the desired ID in the list */
-    while(tmpNode != NULL && id != tmpNode->threadID){
-    	prev	= tmpNode;
-        tmpNode = tmpNode->next;
-    }
-    /* Patch up connections */
-    prev->next = tmpNode->next;
-    
-    /* Free the node */
-	freeNode(&tmpNode);
+    return L->nodeCount;
 }
 
 /* Print the list */
 void printList(TLRef L){
     /* get first node */
-    TNRef tmpNode = L->back;
-    printf("\n\nWalking a list.\n\n");
+    TNRef tmpNode = L->front;
+    printf("Walking a list.\n");
     
     /* print all nodes */
     while(tmpNode != NULL){
-        printf("Visiting a node. Tickets: %d\n", tmpNode->tickets);
+        printf("(%d)->", tmpNode->threadID);
         tmpNode = tmpNode->next;
     }
+    printf("NULL");
+    return;
 }
 
-/**
- * The test application
- * uncomment to test the list
- */
-/* int main(void){
-    printf("\nThis is a test of our list\n\n");
-    printf("Creating the list...\n");
-    
-    TLRef mylist = newThreadList();
-    
-    int d1 = 10;
-    int d2 = 20;
-    int d3 = 30;
-    
-    insertData(mylist, 1, &d1, 10);
-    insertData(mylist, 2, &d2, 15);
-    insertData(mylist, 3, &d3, 20);
-      
-    printList(mylist);
-    
-    int *data = getID(mylist, 3);
-    
-    printf("\nFound node: %d\n", *data);
-
-    printf("Freeing the list...\n");
-    
-    freeList(&mylist);
-    printf("\n\nDone!\n\n");
-    return 0;
-} */
+int main(void){
+	
+	printf("Testing list:\n\n");
+	
+	int data1 = 1;
+	int data2 = 2;
+	int data3 = 3;
+	
+	TLRef _list = newThreadList();
+	
+	insertData(_list, 1, &data1, 10);
+	insertData(_list, 2, &data2, 15);
+	insertData(_list, 3, &data3, 10);
+	
+	printList(_list);
+	
+	freeList(&_list);
+	return 0;
+}

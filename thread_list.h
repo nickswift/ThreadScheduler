@@ -28,8 +28,8 @@ struct ThreadList{
     struct ThreadListNode * back;
     
     /* Lottery information */
-    int numTickets;
-    int numNodes;
+    int ticketCount;
+    int nodeCount;
 } ThreadList;
  
 /* Define struct references */
@@ -42,7 +42,7 @@ void insertData(TLRef L, int id, void * data, int tickets);
 
 /* Destructors */
 void freeList(TLRef *pL);
-void freeNode(TNRef *pN);
+void freeNode(TLRef L, TNRef *pN);
 
 /* check for list emptiness */
 int isListEmpty(TLRef L);
@@ -52,15 +52,6 @@ int getTickets(TLRef L);
 
 /* get list size */
 int getSize(TLRef L);
-
-/* Get data out of the list */
-void* getFront(TLRef L);
-void* getID(TLRef L, int id);
-int   getID_tickets(TLRef L, int id);
-void* getIndex(TLRef L, int index);
-TNRef getIndexNode(TLRef L, int index);
-
-void removeID(TLRef L, int id);
 
 /**
  * I'm using this method to seperate making the list empty from 
