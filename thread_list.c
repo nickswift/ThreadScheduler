@@ -54,11 +54,24 @@ void insertData(TLRef L, int id, void * data, int tickets){
 
 /* Deallocate a node */
 void freeNode(TLRef L, TNRef *pN){
-	/* Decrement number of tickets in the list */
-	TNRef tmp = *pN;
-	L->ticketCount -= tmp->tickets;
+    /* get the current node, set up previous */
+    TNRef tmp     = L->front;
+    TNRef tmpPrev = tmp;
+    
+    while(tmp != NULL && tmp != *pN){
+    	tmpPrev = tmp;
+    	tmp = tmp->next;
+    }
+    /* patch up old connections */
+    tmpPrev->next = tmp->next;
+    
+    /* Decrement number of tickets in the list */
+    L->ticketCount -= tmp->tickets;
+    
+    /* Not sure if this is necessary */
+    /* tmp = tmpPrev = NULL; */
 
-	/* Delete the node */
+    /* Delete the node */
     if(*pN != NULL){
         free(*pN);
         *pN = NULL;
