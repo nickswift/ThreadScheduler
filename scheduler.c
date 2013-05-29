@@ -19,8 +19,8 @@
 
 /* Global constants */
 #define THREAD_STACKSIZE 8192
-#define TIMER_Q_SEC 0
-#define TIMER_Q_USEC 5
+#define TIMER_Q_SEC 5
+#define TIMER_Q_USEC 0
 
 /* Struct Typedefs */
 typedef struct ThreadObj {
@@ -62,7 +62,9 @@ int thread_create(void (*thread_func)(void), int priority){
 
     /* make the new context with the provided function */
     makecontext(&(pThrObj->ctx), thread_func, 0);
-
+	
+	printList(gbl_thread_list);
+ 
     return 0;
 }
 
@@ -76,6 +78,7 @@ void thread_yield(){
 
     gbl_curr_thread = lottery();
     
+    printf("OLD Thread ID is %d\n", old_tid);
     printf("Thread ID is %d\n", gbl_curr_thread);
 
     /* don't need to swap if it's the same thread */
@@ -88,32 +91,50 @@ void thread_yield(){
         ucontext_t ctxtwo = thrTwo->ctx;
 
 		/* restart the timer */
-		struct itimerval new_timer = {0};
-		sched_timer.it_value.tv_sec  = TIMER_Q_SEC;
-		sched_timer.it_value.tv_usec = TIMER_Q_USEC;
+		struct itimerval new_timer;
+		new_timer.it_interval.tv_sec = 0;
+		new_timer.it_interval.tv_usec = 0;
+		new_timer.it_value.tv_sec  = TIMER_Q_SEC;
+		new_timer.it_value.tv_usec = TIMER_Q_USEC;
 		
-		setitimer(ITIMER_VIRTUAL, &new_timer, NULL);
+		setitimer(ITIMER_REAL, &new_timer, NULL);
 		
         /* PROBLEM HERE */
         swapcontext(&ctxone,&ctxtwo);
     }
 
     /* restart the timer */
-    struct itimerval new_timer = {0};
-    sched_timer.it_value.tv_sec  = TIMER_Q_SEC;
-    sched_timer.it_value.tv_usec = TIMER_Q_USEC;
+    struct itimerval new_timer;
+	new_timer.it_interval.tv_sec = 0;
+	new_timer.it_interval.tv_usec = 0;
+    new_timer.it_value.tv_sec  = TIMER_Q_SEC;
+    new_timer.it_value.tv_usec = TIMER_Q_USEC;
 	
-    setitimer(ITIMER_VIRTUAL, &new_timer, NULL);
+    setitimer(ITIMER_REAL, &new_timer, NULL);
     return;
 }
 
 void thread_exit(){
+	struct itimerval sched_timer = {0};
+
+    /* turn off timer while in scheduler */
+    setitimer(ITIMER_VIRTUAL, &sched_timer, NULL);
+	
     removeID(gbl_thread_list, gbl_curr_thread);
 
     gbl_curr_thread = lottery();
 
     ThreadObj *pThrObj = getID(gbl_thread_list, gbl_curr_thread);
 
+	/* restart the timer */
+    struct itimerval new_timer;
+	new_timer.it_interval.tv_sec = 0;
+	new_timer.it_interval.tv_usec = 0;
+    new_timer.it_value.tv_sec  = TIMER_Q_SEC;
+    new_timer.it_value.tv_usec = TIMER_Q_USEC;
+	
+    setitimer(ITIMER_REAL, &new_timer, NULL);
+	
     setcontext(&(pThrObj->ctx));
 
     return;
@@ -169,18 +190,18 @@ void init_scheduler(){
     if(just_once++ == 0){
         gbl_thread_list = newThreadList();
 
-        ucontext_t tmpCtx;
+        ucontext_t *tmpCtx;
         getcontext(&tmpCtx);
 
         /* main thread get average priority */
-        ThreadObj *pThrObj = create_ThreadObj(&tmpCtx, 20);
+        ThreadObj *pThrObj = create_ThreadObj(&tmpCtx, 39);
 
         insertData(gbl_thread_list, pThrObj->tid, pThrObj, pThrObj->tickets);
 
         struct sigaction sched_handler = {0};
         sched_handler.sa_handler = &thread_yield;
 
-        sigaction(SIGVTALRM, &sched_handler, NULL);
+        sigaction(SIGALRM, &sched_handler, NULL);
     }
     return;
 }

@@ -28,7 +28,7 @@ int main(){
     /* Insert a random number of threads into the scheduler */
 	int threads;
 	printf("Inserting threads\n");
-	for (threads = rand()%254 + 1 ; threads > 0; threads--){
+	for (threads = rand()%10/*254*/ + 1 ; threads > 0; threads--){
         thread_create(threadFunction, rand()%39 + 0);
 	}
 	printf("Threads inserted\n\n");
@@ -50,7 +50,7 @@ void threadFunction(){
 	int runTime;
 	int ctid;
 
-	for( runTime = rand()%100 + 50; runTime > 0; runTime--){
+	for( runTime = rand()%10 + 5; runTime > 0; runTime--){
 		
 		ctid 		= get_gbl_thread();
 		TLRef tmpL 		= get_gbl_thread_list();
@@ -58,7 +58,9 @@ void threadFunction(){
 	
 		printf("I am Thread %d, with %d Tickets\n", ctid, ct_tickets);
 
-		if(rand()%100 < 5){
+		sleep(1);
+		
+		if(rand()%10 == 0){
 			printf("Thread ID %d Yielding\n",ctid);
 			thread_yield();
 		}

@@ -155,13 +155,17 @@ int getID_tickets(TLRef L, int ID){
 void removeID(TLRef L, int ID){
 	/* get first node */
     TNRef tmpNode = L->front;
-    
+    TNRef removeNode;
+	
     /* find the desired ID in the list */
-    while(tmpNode != NULL && ID != tmpNode->threadID){
+    while(tmpNode->next != NULL && ID != tmpNode->next->threadID){
         tmpNode = tmpNode->next;
     }
-    
-    freeNode(L, &tmpNode);
+	
+	removeNode = tmpNode->next;
+	tmpNode->next = tmpNode->next->next;
+	
+    freeNode(L, &removeNode);
 }
 
 /* Print the list */
