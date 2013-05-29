@@ -125,7 +125,7 @@ void printList(TLRef L){
     return;
 }
 
-int main(void){
+/*int main(void){
 	
 	printf("Testing list:\n\n");
 	
@@ -143,4 +143,4 @@ int main(void){
 	
 	freeList(&_list);
 	return 0;
-}
+}*/
