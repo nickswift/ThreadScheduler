@@ -53,6 +53,9 @@ int getTickets(TLRef L);
 /* get list size */
 int getSize(TLRef L);
 
+/* Get thread data by id */
+void* getID(TLRef L, int ID);
+
 /**
  * I'm using this method to seperate making the list empty from 
  * freeing it.
