@@ -70,8 +70,6 @@ void threadFunction(){
 		int ct_tickets 	= getID_tickets(tmpL, ctid);
 	
 		printf("I am Thread %d, with %d Tickets\n", ctid, ct_tickets);
-
-		sleep(1);
 		
 		if(rand()%10 == 0){
 			printf("Thread ID %d Yielding\n",ctid);
