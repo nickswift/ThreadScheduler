@@ -12,6 +12,9 @@
 #include <stdlib.h>
 #include <time.h>
 
+#define _XOPEN_SOURCE
+#include <ucontext.h>
+
 #include "scheduler.h"
 
 
@@ -33,7 +36,17 @@ int main(){
 	}
 	printf("Threads inserted\n\n");
 	
+	TLRef _list = get_gbl_thread_list();
+	
 	while(numThreads() > 1){
+		printf("%d threads\n", numThreads());
+		
+		/* Update context, and store it in the main thread object */
+		struct ThreadObj *mthread = _list->front->data;
+		ucontext_t *tmpCtx = malloc(sizeof(ucontext_t));
+        getcontext(tmpCtx);
+        mthread->ctx = *tmpCtx;
+		
 		printf("Thread yielding\n");
 		thread_yield();
 	}
@@ -52,7 +65,7 @@ void threadFunction(){
 
 	for( runTime = rand()%10 + 5; runTime > 0; runTime--){
 		
-		ctid 		= get_gbl_thread();
+		ctid 		    = get_gbl_curr_thread();
 		TLRef tmpL 		= get_gbl_thread_list();
 		int ct_tickets 	= getID_tickets(tmpL, ctid);
 	
@@ -63,6 +76,7 @@ void threadFunction(){
 		if(rand()%10 == 0){
 			printf("Thread ID %d Yielding\n",ctid);
 			thread_yield();
+		
 		}
 	}
 	printf("Thread ID %d Exiting\n", ctid);

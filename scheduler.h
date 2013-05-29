@@ -11,6 +11,13 @@
 #ifndef _SCHEDULER_H_INCLUDE
 #define _SCHEDULER_H_INCLUDE
 
+/* Struct Typedefs */
+typedef struct ThreadObj {
+    ucontext_t ctx;
+    int tid;
+    int tickets;
+} ThreadObj;
+
 /* Functions Declarations */
 int thread_create(void (*thread_func)(void), int priority);
 void thread_yield();

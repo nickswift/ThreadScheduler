@@ -58,6 +58,7 @@ void freeNode(TLRef L, TNRef *pN){
     if(*pN != NULL){
     	TNRef N         = *pN;
     	L->ticketCount -= N->tickets;
+    	L->nodeCount--;
     	
         free(*pN);
         *pN = NULL;
@@ -216,37 +217,3 @@ TNRef getNodeAtTicket(TLRef L, int winning_ticket){
 
 	return(current);
 }
-
-/*int main(void){
-	
-	printf("Testing list:\n\n");
-	
-	int data1 = 1;
-	int data2 = 2;
-	int data3 = 3;
-	
-	TLRef _list = newThreadList();
-	
-	insertData(_list, 1, &data1, 10);
-	insertData(_list, 2, &data2, 15);
-	insertData(_list, 3, &data3, 10);
-	
-	printList(_list);
-	
-	/*TNRef tmpnode = _list->front->next;*/
-	
-	/*freeNode(_list, &tmpnode);
-	
-	printList(_list);
-	
-	freeList(&_list);
-	
-	printf("DONE\n");
-	*/
-	
-/*	freeList(&_list);
-	
-	printf("done");
-	return 0;
-}
-*/

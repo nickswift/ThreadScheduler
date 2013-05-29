@@ -10,8 +10,10 @@
 #include <stdlib.h>
 #include <signal.h>
 
+
 #define _XOPEN_SOURCE
 #include <ucontext.h>
+
 
 #include <sys/time.h>
 
@@ -19,15 +21,8 @@
 
 /* Global constants */
 #define THREAD_STACKSIZE 8192
-#define TIMER_Q_SEC 5
-#define TIMER_Q_USEC 0
-
-/* Struct Typedefs */
-typedef struct ThreadObj {
-    ucontext_t ctx;
-    int tid;
-    int tickets;
-} ThreadObj;
+#define TIMER_Q_SEC 0
+#define TIMER_Q_USEC 100
 
 /* Global Variables */
 static int gbl_curr_thread;
@@ -97,7 +92,7 @@ void thread_yield(){
 		new_timer.it_value.tv_sec  = TIMER_Q_SEC;
 		new_timer.it_value.tv_usec = TIMER_Q_USEC;
 		
-		setitimer(ITIMER_REAL, &new_timer, NULL);
+		setitimer(ITIMER_VIRTUAL, &new_timer, NULL);
 		
         /* PROBLEM HERE */
         swapcontext(&ctxone,&ctxtwo);
@@ -110,7 +105,7 @@ void thread_yield(){
     new_timer.it_value.tv_sec  = TIMER_Q_SEC;
     new_timer.it_value.tv_usec = TIMER_Q_USEC;
 	
-    setitimer(ITIMER_REAL, &new_timer, NULL);
+    setitimer(ITIMER_VIRTUAL, &new_timer, NULL);
     return;
 }
 
@@ -121,6 +116,8 @@ void thread_exit(){
     setitimer(ITIMER_VIRTUAL, &sched_timer, NULL);
 	
     removeID(gbl_thread_list, gbl_curr_thread);
+    
+    printList(gbl_thread_list);
 
     gbl_curr_thread = lottery();
 
@@ -133,7 +130,7 @@ void thread_exit(){
     new_timer.it_value.tv_sec  = TIMER_Q_SEC;
     new_timer.it_value.tv_usec = TIMER_Q_USEC;
 	
-    setitimer(ITIMER_REAL, &new_timer, NULL);
+    setitimer(ITIMER_VIRTUAL, &new_timer, NULL);
 	
     setcontext(&(pThrObj->ctx));
 
@@ -176,7 +173,7 @@ ThreadObj *create_ThreadObj(ucontext_t *pCTX, int priority){
 }
 
 /* return static variables */
-int get_gbl_thread(){
+int get_gbl_curr_thread(){
 	return gbl_curr_thread;
 }
 
@@ -190,18 +187,18 @@ void init_scheduler(){
     if(just_once++ == 0){
         gbl_thread_list = newThreadList();
 
-        ucontext_t *tmpCtx;
-        getcontext(&tmpCtx);
-
+        ucontext_t *tmpCtx = malloc(sizeof(ucontext_t));
+        getcontext(tmpCtx);
+        
         /* main thread get average priority */
-        ThreadObj *pThrObj = create_ThreadObj(&tmpCtx, 39);
+        ThreadObj *pThrObj = create_ThreadObj(tmpCtx, 39);
 
         insertData(gbl_thread_list, pThrObj->tid, pThrObj, pThrObj->tickets);
 
         struct sigaction sched_handler = {0};
         sched_handler.sa_handler = &thread_yield;
 
-        sigaction(SIGALRM, &sched_handler, NULL);
+        sigaction(SIGVTALRM, &sched_handler, NULL);
     }
     return;
 }
