@@ -20,13 +20,13 @@ typedef struct ThreadObj {
 
 /* Functions Declarations */
 int thread_create(void (*thread_func)(void), int priority);
-void thread_yield();
-void thread_exit();
-int numThreads();
+void thread_yield(int);
+void thread_exit(void);
+int numThreads(void);
 
 /* Export file-wide globals */
-int get_gbl_curr_thread();
-TLRef get_gbl_thread_list();
+int get_gbl_curr_thread(void);
+TLRef get_gbl_thread_list(void);
 
 #endif
 

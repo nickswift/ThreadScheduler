@@ -14,7 +14,8 @@
 #include "thread_list.h"
 
 /* constructors */
-TLRef newThreadList(void){
+TLRef newThreadList(void)
+{
     /* Make the list */
     TLRef _list         = malloc(sizeof(struct ThreadList));
     
@@ -22,14 +23,14 @@ TLRef newThreadList(void){
     _list->front        = NULL;
    
     /* Setup ticket count and node count */
-    _list->ticketCount = 0;
-    _list->nodeCount   = 0;
+    _list->ticketCount  = 0;
+    _list->nodeCount    = 0;
     return _list;
 }
 
 /* A single node insertion wrapper to make this list easier to use */
-void insertData(TLRef L, int id, void * data, int tickets){
-
+void insertData(TLRef L, int id, void * data, int tickets)
+{
     TNRef _node     = malloc(sizeof(struct ThreadListNode));
     
     _node->data     = data;
@@ -53,7 +54,8 @@ void insertData(TLRef L, int id, void * data, int tickets){
 }
 
 /* Deallocate a node */
-void freeNode(TLRef L, TNRef *pN){
+void freeNode(TLRef L, TNRef *pN)
+{
 	/* Delete the node */
     if(*pN != NULL){
     	TNRef N         = *pN;
@@ -66,14 +68,15 @@ void freeNode(TLRef L, TNRef *pN){
 }
 
 /* excise a node */
-void exciseNode(TLRef L, TNRef N){
+void exciseNode(TLRef L, TNRef N)
+{
     /* get the current node, set up previous */
     TNRef tmp     = L->front;
     TNRef tmpPrev = tmp;
     
     while(tmp != NULL && tmp != N){
     	tmpPrev = tmp;
-    	tmp = tmp->next;
+    	tmp     = tmp->next;
     }
     if(tmp == NULL)
     	return;
@@ -109,8 +112,8 @@ void clearList(TLRef L){
 }
 
 /* Deallocate a list */
-void freeList(TLRef *pL){
-	
+void freeList(TLRef *pL)
+{
     clearList(*pL);
     
     if(*pL != NULL){
@@ -120,18 +123,22 @@ void freeList(TLRef *pL){
 }
 
 /* check list emptiness */
-int isListEmpty(TLRef L){
+int isListEmpty(TLRef L)
+{
 	return (L->ticketCount <= 0);
 }
-int getTickets(TLRef L){
+int getTickets(TLRef L)
+{
     return L->ticketCount;
 }
-int getSize(TLRef L){
+int getSize(TLRef L)
+{
     return L->nodeCount;
 }
 
 /* get node data by id */
-void* getID(TLRef L, int ID){
+void* getID(TLRef L, int ID)
+{
     /* get first node */
     TNRef tmpNode = L->front;
     
@@ -142,7 +149,8 @@ void* getID(TLRef L, int ID){
     return tmpNode->data;
 }
 /* returns # of tickets at id*/
-int getID_tickets(TLRef L, int ID){
+int getID_tickets(TLRef L, int ID)
+{
     /* get first node */
     TNRef tmpNode = L->front;
     
@@ -153,7 +161,8 @@ int getID_tickets(TLRef L, int ID){
     return tmpNode->tickets;
 }
 
-void removeID(TLRef L, int ID){
+void removeID(TLRef L, int ID)
+{
 	/* get first node */
     TNRef tmpNode = L->front;
     TNRef removeNode;
@@ -170,17 +179,18 @@ void removeID(TLRef L, int ID){
 }
 
 /* Print the list */
-void printList(TLRef L){
+void printList(TLRef L)
+{
     /* get first node */
     TNRef tmpNode = L->front;
-    printf("Walking a list.\n");
+    printf("\n\n");
     
     /* print all nodes */
     while(tmpNode != NULL){
         printf("(%d)->", tmpNode->threadID);
         tmpNode = tmpNode->next;
     }
-    printf("[NULL]\n");
+    printf("[NULL]\n\n");
     return;
 }
 
@@ -188,7 +198,8 @@ void printList(TLRef L){
  * Choose a thread corresponding to a ticket
  * within the list's range of lottery tickets
  */
-TNRef getNodeAtTicket(TLRef L, int winning_ticket){
+TNRef getNodeAtTicket(TLRef L, int winning_ticket)
+{
 	// Error conditions
 	if(L == NULL){
 		printf("Error: null List reference\n");
@@ -200,7 +211,7 @@ TNRef getNodeAtTicket(TLRef L, int winning_ticket){
 	}
 
 	/* Set up walk */
-	int tmpIndex = winning_ticket;
+	int tmpIndex  = winning_ticket;
 	TNRef current = L->front;
 
 	/* Walk down the list */

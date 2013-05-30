@@ -18,15 +18,18 @@
 #include "scheduler.h"
 
 
-void threadFunction();
+void threadFunction(void);
 
 /** 
  * threads.c functions
  */
-
-int main(){
+int main(void)
+{
     /* Give srand a seed number */
 	srand(time(NULL));
+	
+	/* sets up the scheduler. only happens once */
+    init_scheduler();
 
     /* Insert a random number of threads into the scheduler */
 	int threads;
@@ -36,19 +39,13 @@ int main(){
 	}
 	printf("Threads inserted\n\n");
 	
-	TLRef _list = get_gbl_thread_list();
-	
 	while(numThreads() > 1){
 		printf("%d threads\n", numThreads());
-		
-		/* Update context, and store it in the main thread object */
-		struct ThreadObj *mthread = _list->front->data;
-		ucontext_t *tmpCtx = malloc(sizeof(ucontext_t));
-        getcontext(tmpCtx);
-        mthread->ctx = *tmpCtx;
-		
+
 		printf("Thread yielding\n");
-		thread_yield();
+		thread_yield(0);
+		
+		printf("Returned to main\n");
 	}
 	
 	return 0;
@@ -59,7 +56,8 @@ int main(){
  * this does the arbitrary work we need 
  * for a function to be a thread
  */
-void threadFunction(){
+void threadFunction(void)
+{
 	int runTime;
 	int ctid;
 
@@ -70,10 +68,12 @@ void threadFunction(){
 		int ct_tickets 	= getID_tickets(tmpL, ctid);
 	
 		printf("I am Thread %d, with %d Tickets\n", ctid, ct_tickets);
+
+		/*sleep(1);*/
 		
 		if(rand()%10 == 0){
 			printf("Thread ID %d Yielding\n",ctid);
-			thread_yield();
+			thread_yield(0);
 		
 		}
 	}
