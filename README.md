@@ -72,7 +72,7 @@ job.
 thread_list can now be freed using a single function, freeList(TLRef *pL). This function calls clear_list()
 by itself, but that function is still accessible in case one wants to clear the list without deleting it.
 
-## V0.4
+## V0.5
 
 init_scheduler() is now called separately from thread_create. From within main. I determined that the pThrObj being created in init_scheduler() was passing pointers to objects in the local scope which were destroyed when init_scheduler returned. main_thread and all of its components are now global. (they do this on die.net's example too: http://linux.die.net/man/3/makecontext) the other contexts are fine, because their functions don't exit until they're ready.
 
