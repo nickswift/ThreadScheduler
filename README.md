@@ -7,6 +7,14 @@ ThreadScheduler
 
 A simple user-space thread scheduler
 
+
+Usage:
+	Compile by running "make"
+	Execute by running "./scheduler"
+	
+
+Revision History: 
+
 ## V0.1
 > The initial version of the thread scheduler is a restatement of
 > the code given to us by Prof. Brandt. It still doesn't work, but when

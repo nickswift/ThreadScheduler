@@ -37,4 +37,10 @@ we can get to the index by subtracting the values of each thread as we pass it.
 So to get to 6, we visit ID:1 and remove 5 tickets from our index, this leaves us with 1 ticket. Visiting ID:2 we 
 remove 3 tickets, leaving us with less than 1 ticket, and thus choosing thread ID:2 as we would with an array. 
 
+Our program “theApp” generates a random number of threads between 1 and “NUM_THREADS”, and for each thread generates a priority value from 0 to 39. Each of these threads is then created using the “thread_create()” function. After main has finished creating threads, it sits in a while loop waiting for all of its child threads to finish before quitting itself. Our application treats main as the first thread. 
+
+Each thread runs a function which consists of a loop that will run for a random # of iterations, this number is determined by “THREAD_RUNS”. After the function has gone through all of its iteration it exits. During the course of each iteration the function has a 10% chance of yielding itself. We chose to allow our functions to yield and exit to better replicate a real scheduler’s duties. 
+
+The thread lottery is initiated when a thread either exits, yields itself, or is yielded by the scheduler using a timer interrupt to enforce the quanta. If the thread exited, it is removed from the scheduler before a new thread is selected, if a thread was yielded it remains in a scheduler and a new thread is chosen. 
+
 
