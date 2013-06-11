@@ -74,7 +74,7 @@ int thread_create(void (*thread_func)(void), int priority){
     return 0;
 }
 
-void thread_yield(int sig)
+void thread_yield(void)
 {
     struct itimerval sched_timer = {0};
 
@@ -217,9 +217,9 @@ void init_scheduler(void)
     
     /* main thread get average priority */
     main_thread_obj = create_ThreadObj(main_thread, 39);
-
-    insertData(gbl_thread_list, main_thread_obj->tid, main_thread_obj, main_thread_obj->tickets);
-
+    if(numThreads() == 0) {
+        insertData(gbl_thread_list, main_thread_obj->tid, main_thread_obj, main_thread_obj->tickets);
+	}
     sched_handler.sa_handler       = &thread_yield;
 
     sigaction(SIGVTALRM, &sched_handler, NULL);

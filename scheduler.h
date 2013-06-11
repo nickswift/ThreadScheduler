@@ -20,7 +20,7 @@ typedef struct ThreadObj {
 
 /* Functions Declarations */
 int thread_create(void (*thread_func)(void), int priority);
-void thread_yield(int);
+void thread_yield(void);
 void thread_exit(void);
 int numThreads(void);
 void init_scheduler(void);

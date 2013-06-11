@@ -42,7 +42,6 @@ int main(void)
 	printf("Threads inserted\n\n");
 	
 	/* TLRef _list = get_gbl_thread_list(); */
-	
 	while(numThreads() > 1){
 		printf("%d threads\n", numThreads());
 		
@@ -53,12 +52,12 @@ int main(void)
         mthread->ctx = *tmpCtx;*/
 		
 		printf("Thread yielding\n");
-		thread_yield(0);
+		thread_yield();
 		
 		printf("Returned to main\n");
 	}
 	
-	printf("Sim FINISHED YAY!");
+	printf("Sim FINISHED YAY!\n");
 	return 0;
 }
 
@@ -84,7 +83,7 @@ void threadFunction(void)
 		
 		if(rand()%10 == 0){
 			printf("Thread ID %d Yielding\n",ctid);
-			thread_yield(0);
+			thread_yield();
 		
 		}
 	}
