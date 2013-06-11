@@ -129,7 +129,11 @@ void thread_exit(void)
 
     /* turn off timer while in scheduler */
     setitimer(ITIMER_VIRTUAL, &sched_timer, NULL);
+
+    printf("Removing Thread: %d\n", gbl_curr_thread);
 	
+    printList(gbl_thread_list);
+
     removeID(gbl_thread_list, gbl_curr_thread);
     
     printList(gbl_thread_list);
@@ -215,7 +219,9 @@ void init_scheduler(void)
     main_thread_obj = create_ThreadObj(main_thread, 39);
 
     insertData(gbl_thread_list, main_thread_obj->tid, main_thread_obj, main_thread_obj->tickets);
-    sched_handler.sa_handler = &thread_yield;
+
+    sched_handler.sa_handler       = &thread_yield;
+
     sigaction(SIGVTALRM, &sched_handler, NULL);
     return;
 }

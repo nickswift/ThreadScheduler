@@ -36,20 +36,29 @@ int main(void)
     /* Insert a random number of threads into the scheduler */
 	int threads;
 	printf("Inserting threads\n");
-	for (threads = rand()%NUM_THREADS + 1 ; threads > 0; threads--){
+	for (threads = NUM_THREADS/*rand()%NUM_THREADS + 1*/ ; threads > 0; threads--){
         thread_create(threadFunction, rand()%39 + 0);
 	}
 	printf("Threads inserted\n\n");
 	
+	/* TLRef _list = get_gbl_thread_list(); */
+	
 	while(numThreads() > 1){
 		printf("%d threads\n", numThreads());
-
+		
+		/* Update context, and store it in the main thread object */
+		/*struct ThreadObj *mthread = _list->front->data;
+		ucontext_t *tmpCtx = malloc(sizeof(ucontext_t));
+        getcontext(tmpCtx);
+        mthread->ctx = *tmpCtx;*/
+		
 		printf("Thread yielding\n");
 		thread_yield(0);
 		
 		printf("Returned to main\n");
 	}
 	
+	printf("Sim FINISHED YAY!");
 	return 0;
 }
 
@@ -63,7 +72,7 @@ void threadFunction(void)
 	int runTime;
 	int ctid;
 
-	for( runTime = rand()%THREAD_RUNS + 5; runTime > 0; runTime--){
+	for( runTime = THREAD_RUNS/*rand()%THREAD_RUNS + 5*/; runTime > 0; runTime--){
 		
 		ctid 		    = get_gbl_curr_thread();
 		TLRef tmpL 		= get_gbl_thread_list();

@@ -183,14 +183,14 @@ void printList(TLRef L)
 {
     /* get first node */
     TNRef tmpNode = L->front;
-    printf("\n\n");
+    printf("%d threads in list\n", L->nodeCount);
     
     /* print all nodes */
     while(tmpNode != NULL){
         printf("(%d)->", tmpNode->threadID);
         tmpNode = tmpNode->next;
     }
-    printf("[NULL]\n\n");
+    printf("[NULL]\n");
     return;
 }
 
