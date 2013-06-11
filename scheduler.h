@@ -23,6 +23,7 @@ int thread_create(void (*thread_func)(void), int priority);
 void thread_yield(int);
 void thread_exit(void);
 int numThreads(void);
+void init_scheduler(void);
 
 /* Export file-wide globals */
 int get_gbl_curr_thread(void);
