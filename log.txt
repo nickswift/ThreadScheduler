@@ -1,0 +1,392 @@
+INSERTING id:	0
+Inserting threads
+INSERTING id:	1
+INSERTING id:	2
+INSERTING id:	3
+INSERTING id:	4
+INSERTING id:	5
+INSERTING id:	6
+INSERTING id:	7
+INSERTING id:	8
+INSERTING id:	9
+INSERTING id:	10
+Threads inserted
+
+11 threads left.
+MAIN Yielding
+
+***
+Swapping Threads
+OLD Thread ID is 0
+Lotto Finished
+New Thread ID is 2
+***
+
+I am Thread 2, with 39 Tickets
+I am Thread 2, with 39 Tickets
+I am Thread 2, with 39 Tickets
+I am Thread 2, with 39 Tickets
+I am Thread 2, with 39 Tickets
+I am Thread 2, with 39 Tickets
+Thread ID 2 Exiting
+
+***
+Removing Thread: 2
+Lotto Finished
+New Thread ID is 1
+***
+
+I am Thread 1, with 14 Tickets
+I am Thread 1, with 14 Tickets
+I am Thread 1, with 14 Tickets
+I am Thread 1, with 14 Tickets
+I am Thread 1, with 14 Tickets
+Thread ID 1 Yielding
+
+***
+Swapping Threads
+OLD Thread ID is 1
+Lotto Finished
+New Thread ID is 9
+***
+
+I am Thread 9, with 32 Tickets
+I am Thread 9, with 32 Tickets
+I am Thread 9, with 32 Tickets
+I am Thread 9, with 32 Tickets
+I am Thread 9, with 32 Tickets
+I am Thread 9, with 32 Tickets
+I am Thread 9, with 32 Tickets
+I am Thread 9, with 32 Tickets
+I am Thread 9, with 32 Tickets
+I am Thread 9, with 32 Tickets
+I am Thread 9, with 32 Tickets
+I am Thread 9, with 32 Tickets
+Thread ID 9 Exiting
+
+***
+Removing Thread: 9
+Lotto Finished
+New Thread ID is 4
+***
+
+I am Thread 4, with 33 Tickets
+I am Thread 4, with 33 Tickets
+I am Thread 4, with 33 Tickets
+I am Thread 4, with 33 Tickets
+I am Thread 4, with 33 Tickets
+I am Thread 4, with 33 Tickets
+I am Thread 4, with 33 Tickets
+I am Thread 4, with 33 Tickets
+I am Thread 4, with 33 Tickets
+I am Thread 4, with 33 Tickets
+I am Thread 4, with 33 Tickets
+I am Thread 4, with 33 Tickets
+Thread ID 4 Exiting
+
+***
+Removing Thread: 4
+Lotto Finished
+New Thread ID is 8
+***
+
+I am Thread 8, with 12 Tickets
+I am Thread 8, with 12 Tickets
+I am Thread 8, with 12 Tickets
+I am Thread 8, with 12 Tickets
+I am Thread 8, with 12 Tickets
+I am Thread 8, with 12 Tickets
+Thread ID 8 Yielding
+
+***
+Swapping Threads
+OLD Thread ID is 8
+Lotto Finished
+New Thread ID is 6
+***
+
+I am Thread 6, with 13 Tickets
+I am Thread 6, with 13 Tickets
+I am Thread 6, with 13 Tickets
+I am Thread 6, with 13 Tickets
+I am Thread 6, with 13 Tickets
+Thread ID 6 Exiting
+
+***
+Removing Thread: 6
+Lotto Finished
+New Thread ID is 1
+***
+
+I am Thread 1, with 14 Tickets
+I am Thread 1, with 14 Tickets
+Thread ID 1 Yielding
+
+***
+Swapping Threads
+OLD Thread ID is 1
+Lotto Finished
+New Thread ID is 5
+***
+
+I am Thread 5, with 8 Tickets
+I am Thread 5, with 8 Tickets
+I am Thread 5, with 8 Tickets
+I am Thread 5, with 8 Tickets
+I am Thread 5, with 8 Tickets
+I am Thread 5, with 8 Tickets
+I am Thread 5, with 8 Tickets
+I am Thread 5, with 8 Tickets
+Thread ID 5 Yielding
+
+***
+Swapping Threads
+OLD Thread ID is 5
+Lotto Finished
+New Thread ID is 1
+***
+
+I am Thread 1, with 14 Tickets
+I am Thread 1, with 14 Tickets
+I am Thread 1, with 14 Tickets
+I am Thread 1, with 14 Tickets
+Thread ID 1 Yielding
+
+***
+Swapping Threads
+OLD Thread ID is 1
+Lotto Finished
+New Thread ID is 7
+***
+
+I am Thread 7, with 24 Tickets
+I am Thread 7, with 24 Tickets
+I am Thread 7, with 24 Tickets
+Thread ID 7 Yielding
+
+***
+Swapping Threads
+OLD Thread ID is 7
+Lotto Finished
+New Thread ID is 1
+***
+
+I am Thread 1, with 14 Tickets
+I am Thread 1, with 14 Tickets
+I am Thread 1, with 14 Tickets
+I am Thread 1, with 14 Tickets
+I am Thread 1, with 14 Tickets
+Thread ID 1 Yielding
+
+***
+Swapping Threads
+OLD Thread ID is 1
+Lotto Finished
+New Thread ID is 7
+***
+
+I am Thread 7, with 24 Tickets
+I am Thread 7, with 24 Tickets
+I am Thread 7, with 24 Tickets
+I am Thread 7, with 24 Tickets
+I am Thread 7, with 24 Tickets
+I am Thread 7, with 24 Tickets
+I am Thread 7, with 24 Tickets
+I am Thread 7, with 24 Tickets
+I am Thread 7, with 24 Tickets
+I am Thread 7, with 24 Tickets
+I am Thread 7, with 24 Tickets
+I am Thread 7, with 24 Tickets
+I am Thread 7, with 24 Tickets
+I am Thread 7, with 24 Tickets
+Thread ID 7 Yielding
+
+***
+Swapping Threads
+OLD Thread ID is 7
+Lotto Finished
+New Thread ID is 1
+***
+
+I am Thread 1, with 14 Tickets
+Thread ID 1 Yielding
+
+***
+Swapping Threads
+OLD Thread ID is 1
+Lotto Finished
+New Thread ID is 8
+***
+
+I am Thread 8, with 12 Tickets
+I am Thread 8, with 12 Tickets
+I am Thread 8, with 12 Tickets
+I am Thread 8, with 12 Tickets
+I am Thread 8, with 12 Tickets
+I am Thread 8, with 12 Tickets
+I am Thread 8, with 12 Tickets
+I am Thread 8, with 12 Tickets
+Thread ID 8 Exiting
+
+***
+Removing Thread: 8
+Lotto Finished
+New Thread ID is 1
+***
+
+I am Thread 1, with 14 Tickets
+I am Thread 1, with 14 Tickets
+I am Thread 1, with 14 Tickets
+I am Thread 1, with 14 Tickets
+I am Thread 1, with 14 Tickets
+Thread ID 1 Yielding
+
+***
+Swapping Threads
+OLD Thread ID is 1
+Lotto Finished
+New Thread ID is 5
+***
+
+I am Thread 5, with 8 Tickets
+I am Thread 5, with 8 Tickets
+I am Thread 5, with 8 Tickets
+I am Thread 5, with 8 Tickets
+I am Thread 5, with 8 Tickets
+I am Thread 5, with 8 Tickets
+I am Thread 5, with 8 Tickets
+Thread ID 5 Exiting
+
+***
+Removing Thread: 5
+Lotto Finished
+New Thread ID is 7
+***
+
+I am Thread 7, with 24 Tickets
+I am Thread 7, with 24 Tickets
+I am Thread 7, with 24 Tickets
+I am Thread 7, with 24 Tickets
+I am Thread 7, with 24 Tickets
+I am Thread 7, with 24 Tickets
+I am Thread 7, with 24 Tickets
+I am Thread 7, with 24 Tickets
+I am Thread 7, with 24 Tickets
+Thread ID 7 Exiting
+
+***
+Removing Thread: 7
+Lotto Finished
+New Thread ID is 1
+***
+
+I am Thread 1, with 14 Tickets
+I am Thread 1, with 14 Tickets
+I am Thread 1, with 14 Tickets
+Thread ID 1 Yielding
+
+***
+Swapping Threads
+OLD Thread ID is 1
+Lotto Finished
+New Thread ID is 1
+***
+
+I am Thread 1, with 14 Tickets
+I am Thread 1, with 14 Tickets
+I am Thread 1, with 14 Tickets
+I am Thread 1, with 14 Tickets
+I am Thread 1, with 14 Tickets
+Thread ID 1 Exiting
+
+***
+Removing Thread: 1
+Lotto Finished
+New Thread ID is 10
+***
+
+I am Thread 10, with 9 Tickets
+Thread ID 10 Yielding
+
+***
+Swapping Threads
+OLD Thread ID is 10
+Lotto Finished
+New Thread ID is 0
+***
+
+3 threads left.
+MAIN Yielding
+
+***
+Swapping Threads
+OLD Thread ID is 0
+Lotto Finished
+New Thread ID is 10
+***
+
+I am Thread 10, with 9 Tickets
+I am Thread 10, with 9 Tickets
+I am Thread 10, with 9 Tickets
+I am Thread 10, with 9 Tickets
+Thread ID 10 Yielding
+
+***
+Swapping Threads
+OLD Thread ID is 10
+Lotto Finished
+New Thread ID is 3
+***
+
+I am Thread 3, with 2 Tickets
+I am Thread 3, with 2 Tickets
+I am Thread 3, with 2 Tickets
+I am Thread 3, with 2 Tickets
+Thread ID 3 Yielding
+
+***
+Swapping Threads
+OLD Thread ID is 3
+Lotto Finished
+New Thread ID is 3
+***
+
+I am Thread 3, with 2 Tickets
+I am Thread 3, with 2 Tickets
+Thread ID 3 Exiting
+
+***
+Removing Thread: 3
+Lotto Finished
+New Thread ID is 10
+***
+
+I am Thread 10, with 9 Tickets
+I am Thread 10, with 9 Tickets
+I am Thread 10, with 9 Tickets
+Thread ID 10 Yielding
+
+***
+Swapping Threads
+OLD Thread ID is 10
+Lotto Finished
+New Thread ID is 10
+***
+
+I am Thread 10, with 9 Tickets
+I am Thread 10, with 9 Tickets
+I am Thread 10, with 9 Tickets
+I am Thread 10, with 9 Tickets
+I am Thread 10, with 9 Tickets
+Thread ID 10 Exiting
+
+***
+Removing Thread: 10
+Lotto Finished
+New Thread ID is 0
+***
+
+
+************ ************
+SIMULATION FINISHED. YAY!
+************ ************

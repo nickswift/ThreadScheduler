@@ -32,7 +32,7 @@ TLRef newThreadList(void)
 void insertData(TLRef L, int id, void * data, int tickets)
 {
     TNRef _node     = malloc(sizeof(struct ThreadListNode));
-    printf("INSERTING id:                  %d\n", id);
+    printf("INSERTING id:\t%d\n", id);
     _node->data     = data;
     _node->tickets  = tickets;
     _node->threadID = id;

@@ -69,7 +69,8 @@ int thread_create(void (*thread_func)(void), int priority){
     /* make the new context with the provided function */
     makecontext(&(pThrObj->ctx), thread_func, 0);
 	
-	printList(gbl_thread_list);
+	/* Un-comment for Debug
+	 * printList(gbl_thread_list); */
  
     return 0;
 }
@@ -81,14 +82,16 @@ void thread_yield(void)
     /* turn off timer while in scheduler */
     setitimer(ITIMER_VIRTUAL, &sched_timer, NULL);
 	
+    printf("Swapping Threads\n");
+    printf("OLD Thread ID is %d\n", gbl_curr_thread);
+
     int old_tid     = gbl_curr_thread;
     gbl_curr_thread = lottery();
     
+    printf("New Thread ID is %d\n***\n\n", gbl_curr_thread);
+
     if(gbl_curr_thread == -1)
     	exit(0);
-    
-    printf("OLD Thread ID is %d\n", old_tid);
-    printf("Thread ID is %d\n", gbl_curr_thread);
 
     /* don't need to swap if it's the same thread */
     if(old_tid != gbl_curr_thread){
@@ -132,13 +135,18 @@ void thread_exit(void)
 
     printf("Removing Thread: %d\n", gbl_curr_thread);
 	
-    printList(gbl_thread_list);
+	/* Un-comment for Debug
+	 * printList(gbl_thread_list); */
 
     removeID(gbl_thread_list, gbl_curr_thread);
     
-    printList(gbl_thread_list);
+	/* Un-comment for Debug
+	 * printList(gbl_thread_list); */
 
     gbl_curr_thread    = lottery();
+
+    printf("New Thread ID is %d\n***\n\n", gbl_curr_thread);
+
     ThreadObj *pThrObj = getID(gbl_thread_list, gbl_curr_thread);
 
 	/* restart the timer */
