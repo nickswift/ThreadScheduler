@@ -11,8 +11,18 @@ A simple user-space thread scheduler
 Usage:
 	Compile by running "make"
 	Execute by running "./scheduler"
+		*Redirecting output to log is recomened as there is a lot of info printed. 
 	
+Configuration: 
+	The number of threads and the number of tasks perfomred by each thread are randomized. Limits are set in theApp.c. 
+		NUM_THREADS_BASE:   Mininum number of threads. 
+		NUM_THREADS: 		Max number of threads to be generated from the base value
+		THREAD_RUNS_BASE: 	Mininum number of tasks to perform for a thread. 
+		THREAD_RUNS:		MAX number of tasks to perform from the base value.
 
+		
+		
+		
 Revision History: 
 
 ## V0.1

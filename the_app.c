@@ -17,8 +17,10 @@
 
 #include "scheduler.h"
 
-#define NUM_THREADS 20
-#define THREAD_RUNS 10
+#define NUM_THREADS 40
+#define NUM_THREADS_BASE 10
+#define THREAD_RUNS 40
+#define THREAD_RUNS_BASE 10
 
 void threadFunction(void);
 
@@ -36,7 +38,7 @@ int main(void)
     /* Insert a random number of threads into the scheduler */
 	int threads;
 	printf("Inserting threads\n");
-	for (threads = rand()%NUM_THREADS + 1; threads > 0; threads--){
+	for (threads = rand()%NUM_THREADS + NUM_THREADS_BASE; threads > 0; threads--){
         thread_create(threadFunction, rand()%39 + 0);
 	}
 	printf("Threads inserted\n\n");
@@ -65,7 +67,7 @@ void threadFunction(void)
 	int runTime;
 	int ctid;
 
-	for( runTime = rand()%THREAD_RUNS + 5; runTime > 0; runTime--){
+	for( runTime = rand()%THREAD_RUNS + THREAD_RUNS_BASE; runTime > 0; runTime--){
 		
 		ctid 		    = get_gbl_curr_thread();
 		TLRef tmpL 		= get_gbl_thread_list();
