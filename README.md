@@ -1,6 +1,8 @@
+<!--
 SlugCorp
 ========
 *Why solve it, when you can Slug it? &trade;*
+-->
 
 ThreadScheduler
 ---------------
